@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase';
 import Navbar from '../components/Navbar';
 import { useCart } from '../context/CartContext';
 import { CartProvider } from '../context/CartContext';
-import Link from 'next/link';
 
 function ProductsPage() {
   const [products, setProducts] = useState([]);
@@ -97,122 +96,60 @@ function ProductsPage() {
   return (
     <div>
       <Navbar />
-      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '40px 20px' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>All Products</h1>
-        <p style={{ color: '#666', marginBottom: '2rem' }}>Prices in South African Rand (ZAR)</p>
+      <div style={styles.container}>
+        <h1 style={styles.title}>All Products</h1>
+        <p style={styles.subtitle}>Prices in South African Rand (ZAR)</p>
 
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '30px' }}>
-          <button
-            onClick={() => setSelectedCategory('all')}
-            style={{
-              padding: '10px 20px',
-              background: selectedCategory === 'all' ? '#667eea' : 'white',
-              color: selectedCategory === 'all' ? 'white' : '#667eea',
-              border: '2px solid #667eea',
-              borderRadius: '25px',
-              cursor: 'pointer'
-            }}
-          >
-            All Products
-          </button>
-          {categories.map(cat => (
+        {/* Mobile-friendly category filter - scrollable */}
+        <div style={styles.categoryWrapper}>
+          <div style={styles.categoryScroll}>
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              style={{
-                padding: '10px 20px',
-                background: selectedCategory === cat ? '#667eea' : 'white',
-                color: selectedCategory === cat ? 'white' : '#667eea',
-                border: '2px solid #667eea',
-                borderRadius: '25px',
-                cursor: 'pointer'
-              }}
+              onClick={() => setSelectedCategory('all')}
+              style={{...styles.categoryBtn, ...(selectedCategory === 'all' ? styles.categoryActive : {})}}
             >
-              {categoryNames[cat] || cat}
+              All
             </button>
-          ))}
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                style={{...styles.categoryBtn, ...(selectedCategory === cat ? styles.categoryActive : {})}}
+              >
+                {cat === 'dishwashing' ? '🧼' : cat === 'car_wash' ? '🚗' : cat === 'bleach' ? '🧴' : '🧹'} {categoryNames[cat]?.split(' ')[0] || cat}
+              </button>
+            ))}
+          </div>
         </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '50px' }}>Loading products...</div>
+          <div style={styles.loading}>Loading products...</div>
         ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '30px'
-          }}>
+          <div style={styles.grid}>
             {products.map(product => (
               <div 
                 key={product.id} 
-                style={{
-                  border: '1px solid #e0e0e0',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  background: 'white',
-                  transition: 'transform 0.3s',
-                  cursor: 'pointer'
-                }}
+                style={styles.card}
                 onClick={() => window.location.href = `/product/${product.id}`}
               >
-                <div style={{
-                  height: '200px',
-                  background: 'white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '20px',
-                  borderBottom: '1px solid #f0f0f0'
-                }}>
+                <div style={styles.imageContainer}>
                   {product.image_url ? (
-                    <img 
-                      src={product.image_url} 
-                      alt={product.name} 
-                      style={{ 
-                        maxWidth: '100%', 
-                        maxHeight: '100%', 
-                        objectFit: 'contain'
-                      }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = `<div style="font-size: 4rem;">${getCategoryIcon(product.category)}</div>`;
-                      }}
-                    />
+                    <img src={product.image_url} alt={product.name} style={styles.image} />
                   ) : (
-                    <div style={{ fontSize: '4rem' }}>{getCategoryIcon(product.category)}</div>
+                    <div style={styles.icon}>{getCategoryIcon(product.category)}</div>
                   )}
                 </div>
-                <div style={{ padding: '20px' }}>
-                  <h3 style={{ margin: '0 0 10px' }}>{product.name}</h3>
-                  <p style={{ color: '#666', fontSize: '14px', marginBottom: '10px' }}>
-                    {product.description?.substring(0, 60)}...
-                  </p>
-                  <div style={{ marginBottom: '10px' }}>
-                    <span style={{ background: '#f0f0f0', padding: '4px 12px', borderRadius: '12px', fontSize: '12px' }}>
-                      {product.size}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
-                    <div>
-                      <span style={{ fontSize: '24px', fontWeight: 'bold', color: '#667eea' }}>
-                        {formatZAR(product.price)}
-                      </span>
-                      <p style={{ fontSize: '12px', color: '#48bb78', margin: '5px 0 0 0' }}>
-                        Stock: {product.stock_quantity}
-                      </p>
-                    </div>
+                <div style={styles.cardContent}>
+                  <h3 style={styles.productName}>{product.name}</h3>
+                  <p style={styles.description}>{product.description?.substring(0, 60)}...</p>
+                  <span style={styles.sizeBadge}>{product.size}</span>
+                  <div style={styles.cardFooter}>
+                    <span style={styles.price}>{formatZAR(product.price)}</span>
                     <button
                       onClick={(e) => handleAddToCart(product, e)}
                       disabled={product.stock_quantity === 0}
-                      style={{
-                        padding: '8px 16px',
-                        background: product.stock_quantity === 0 ? '#ccc' : '#48bb78',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: product.stock_quantity === 0 ? 'not-allowed' : 'pointer'
-                      }}
+                      style={{...styles.addBtn, background: product.stock_quantity === 0 ? '#ccc' : '#48bb78'}}
                     >
-                      {product.stock_quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+                      {product.stock_quantity === 0 ? 'Out' : 'Add'}
                     </button>
                   </div>
                 </div>
@@ -224,6 +161,127 @@ function ProductsPage() {
     </div>
   );
 }
+
+const styles = {
+  container: {
+    maxWidth: '1280px',
+    margin: '0 auto',
+    padding: '20px 16px'
+  },
+  title: {
+    fontSize: '1.75rem',
+    marginBottom: '8px',
+    color: '#333'
+  },
+  subtitle: {
+    color: '#666',
+    marginBottom: '20px',
+    fontSize: '14px'
+  },
+  categoryWrapper: {
+    marginBottom: '24px',
+    overflowX: 'auto',
+    WebkitOverflowScrolling: 'touch'
+  },
+  categoryScroll: {
+    display: 'flex',
+    gap: '10px',
+    paddingBottom: '8px',
+    minWidth: 'min-content'
+  },
+  categoryBtn: {
+    padding: '8px 16px',
+    border: '1px solid #667eea',
+    background: 'white',
+    color: '#667eea',
+    borderRadius: '25px',
+    cursor: 'pointer',
+    fontSize: '13px',
+    whiteSpace: 'nowrap',
+    transition: 'all 0.3s'
+  },
+  categoryActive: {
+    background: '#667eea',
+    color: 'white'
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: '16px'
+  },
+  card: {
+    border: '1px solid #e0e0e0',
+    borderRadius: '12px',
+    overflow: 'hidden',
+    background: 'white',
+    cursor: 'pointer',
+    transition: 'transform 0.2s'
+  },
+  imageContainer: {
+    height: '180px',
+    background: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '16px',
+    borderBottom: '1px solid #f0f0f0'
+  },
+  image: {
+    maxWidth: '100%',
+    maxHeight: '100%',
+    objectFit: 'contain'
+  },
+  icon: {
+    fontSize: '3rem'
+  },
+  cardContent: {
+    padding: '16px'
+  },
+  productName: {
+    fontSize: '1rem',
+    marginBottom: '8px',
+    color: '#333'
+  },
+  description: {
+    color: '#666',
+    fontSize: '13px',
+    marginBottom: '8px',
+    lineHeight: '1.4'
+  },
+  sizeBadge: {
+    background: '#f0f0f0',
+    padding: '4px 10px',
+    borderRadius: '12px',
+    fontSize: '11px',
+    display: 'inline-block',
+    marginBottom: '12px'
+  },
+  cardFooter: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: '8px'
+  },
+  price: {
+    fontSize: '1.25rem',
+    fontWeight: 'bold',
+    color: '#667eea'
+  },
+  addBtn: {
+    padding: '6px 14px',
+    color: 'white',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontSize: '13px',
+    fontWeight: '500'
+  },
+  loading: {
+    textAlign: 'center',
+    padding: '50px',
+    color: '#666'
+  }
+};
 
 export default function Products() {
   return (

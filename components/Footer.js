@@ -2,118 +2,61 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 export default function Footer() {
-  // Add hover styles on client side only
   useEffect(() => {
     const styleSheet = document.createElement("style");
     styleSheet.textContent = `
-      .footer-link:hover {
-        color: #667eea !important;
-      }
-      .social-link:hover {
-        background: #667eea !important;
-      }
-      .contact-link:hover {
-        color: #667eea !important;
-      }
+      .footer-link:hover { color: #667eea !important; }
+      .social-link:hover { background: #667eea !important; }
     `;
     document.head.appendChild(styleSheet);
-    
-    return () => {
-      document.head.removeChild(styleSheet);
-    };
+    return () => document.head.removeChild(styleSheet);
   }, []);
 
   return (
     <footer style={styles.footer}>
       <div style={styles.container}>
-        {/* Main Footer Content */}
         <div style={styles.grid}>
-          {/* Column 1 - Logo and About */}
+          {/* About Section */}
           <div style={styles.column}>
-            <div style={styles.logoContainer}>
-              <img 
-                src="/assets/logo.png" 
-                alt="LuChem" 
-                style={styles.logo}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.parentElement.innerHTML = '<div style="font-size: 28px; font-weight: bold; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; color: transparent;">LuChem</div>';
-                }}
-              />
-            </div>
+            <img src="/assets/logo.png" alt="LuChem" style={styles.logo} />
             <p style={styles.about}>
               LuChem Cleaning Solutions provides premium quality cleaning detergents, 
-              raw materials, and professional cleaning services. Your trusted partner 
-              for a cleaner, healthier environment.
+              raw materials, and professional cleaning services.
             </p>
-            <div style={styles.socialLinks}>
-              <a 
-                href="https://www.facebook.com/profile.php?id=61570732371551" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="social-link"
-                style={styles.socialLink}
-              >
-                <span style={styles.socialIcon}>📘</span> Facebook
-              </a>
-            </div>
+            <a href="https://www.facebook.com/profile.php?id=61570732371551" target="_blank" rel="noopener noreferrer" style={styles.socialLink}>
+              📘 Facebook
+            </a>
           </div>
 
-          {/* Column 2 - Quick Links */}
+          {/* Quick Links */}
           <div style={styles.column}>
-            <h3 style={styles.columnTitle}>Quick Links</h3>
-            <ul style={styles.linkList}>
-              <li><Link href="/products" className="footer-link" style={styles.link}>🛒 Shop</Link></li>
-              <li><Link href="/water" className="footer-link" style={styles.link}>💧 Water</Link></li>
-              <li><Link href="/raw-materials" className="footer-link" style={styles.link}>🧪 Raw Materials</Link></li>
-              <li><Link href="/services" className="footer-link" style={styles.link}>🧹 Services</Link></li>
-              <li><Link href="/about" className="footer-link" style={styles.link}>📖 About Us</Link></li>
-              <li><Link href="/contact" className="footer-link" style={styles.link}>📞 Contact</Link></li>
-            </ul>
+            <h3 style={styles.title}>Quick Links</h3>
+            <Link href="/products" style={styles.link}>🛒 Shop</Link>
+            <Link href="/water" style={styles.link}>💧 Water</Link>
+            <Link href="/raw-materials" style={styles.link}>🧪 Raw Materials</Link>
+            <Link href="/services" style={styles.link}>🧹 Services</Link>
           </div>
 
-          {/* Column 3 - Policies */}
+          {/* Policies */}
           <div style={styles.column}>
-            <h3 style={styles.columnTitle}>Policies</h3>
-            <ul style={styles.linkList}>
-              <li><Link href="/policies/returns" className="footer-link" style={styles.link}>🔄 Returns Policy</Link></li>
-              <li><Link href="/policies/terms" className="footer-link" style={styles.link}>📜 Terms & Conditions</Link></li>
-              <li><Link href="/policies/privacy" className="footer-link" style={styles.link}>🔒 Privacy Policy</Link></li>
-            </ul>
+            <h3 style={styles.title}>Policies</h3>
+            <Link href="/policies/returns" style={styles.link}>🔄 Returns</Link>
+            <Link href="/policies/terms" style={styles.link}>📜 Terms</Link>
+            <Link href="/policies/privacy" style={styles.link}>🔒 Privacy</Link>
           </div>
 
-          {/* Column 4 - Contact Info */}
+          {/* Contact */}
           <div style={styles.column}>
-            <h3 style={styles.columnTitle}>Contact Us</h3>
-            <div style={styles.contactInfo}>
-              <p style={styles.contactItem}>
-                <span style={styles.contactIcon}>📧</span>
-                <a href="mailto:info@luchem.co.za" className="contact-link" style={styles.contactLink}>info@luchem.co.za</a>
-              </p>
-              <p style={styles.contactItem}>
-                <span style={styles.contactIcon}>📧</span>
-                <a href="mailto:sales@luchem.co.za" className="contact-link" style={styles.contactLink}>sales@luchem.co.za</a>
-              </p>
-              <p style={styles.contactItem}>
-                <span style={styles.contactIcon}>📞</span>
-                <span>071 017 7161 / 071 776 7985</span>
-              </p>
-              <p style={styles.contactItem}>
-                <span style={styles.contactIcon}>📍</span>
-                <span>8 Reserwe Street, Oudtshoorn, Western Cape</span>
-              </p>
-            </div>
+            <h3 style={styles.title}>Contact</h3>
+            <a href="mailto:info@luchem.co.za" style={styles.link}>📧 info@luchem.co.za</a>
+            <a href="mailto:sales@luchem.co.za" style={styles.link}>📧 sales@luchem.co.za</a>
+            <p style={styles.contactText}>📞 071 017 7161</p>
+            <p style={styles.contactText}>📍 Oudtshoorn, WC</p>
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div style={styles.bottomBar}>
-          <p style={styles.copyright}>
-            © {new Date().getFullYear()} LuChem Cleaning Solutions. All rights reserved.
-          </p>
-          <p style={styles.credit}>
-            Designed with ❤️ for a cleaner South Africa
-          </p>
+          <p>© {new Date().getFullYear()} LuChem. All rights reserved.</p>
         </div>
       </div>
     </footer>
@@ -124,112 +67,70 @@ const styles = {
   footer: {
     background: '#1a1a2e',
     color: '#fff',
-    marginTop: '60px',
-    padding: '60px 0 20px'
+    marginTop: '40px',
+    padding: '40px 16px 20px'
   },
   container: {
     maxWidth: '1280px',
-    margin: '0 auto',
-    padding: '0 20px'
+    margin: '0 auto'
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-    gap: '40px',
-    marginBottom: '40px'
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: '30px',
+    marginBottom: '30px'
   },
   column: {
     display: 'flex',
-    flexDirection: 'column'
-  },
-  logoContainer: {
-    marginBottom: '20px'
+    flexDirection: 'column',
+    gap: '10px'
   },
   logo: {
-    height: '80px',
+    height: '50px',
     width: 'auto',
     objectFit: 'contain',
-    filter: 'brightness(0) invert(1)'
+    filter: 'brightness(0) invert(1)',
+    marginBottom: '10px'
   },
   about: {
-    fontSize: '14px',
-    lineHeight: '1.6',
-    color: '#aaa',
-    marginBottom: '20px'
+    fontSize: '13px',
+    lineHeight: '1.5',
+    color: '#aaa'
   },
-  socialLinks: {
-    display: 'flex',
-    gap: '15px'
-  },
-  socialLink: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    color: '#fff',
-    textDecoration: 'none',
-    padding: '8px 16px',
-    background: '#2d2d44',
-    borderRadius: '8px',
-    transition: 'background 0.3s',
-    width: 'fit-content'
-  },
-  socialIcon: {
-    fontSize: '18px'
-  },
-  columnTitle: {
-    fontSize: '18px',
+  title: {
+    fontSize: '16px',
     fontWeight: 'bold',
-    marginBottom: '20px',
-    color: '#fff',
-    position: 'relative',
-    paddingBottom: '10px'
-  },
-  linkList: {
-    listStyle: 'none',
-    padding: 0,
-    margin: 0
+    marginBottom: '5px',
+    color: '#fff'
   },
   link: {
-    display: 'block',
     color: '#aaa',
     textDecoration: 'none',
-    padding: '8px 0',
-    transition: 'color 0.3s'
+    fontSize: '13px',
+    transition: 'color 0.3s',
+    padding: '4px 0'
   },
-  contactInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px'
-  },
-  contactItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    fontSize: '14px',
+  contactText: {
     color: '#aaa',
+    fontSize: '13px',
     margin: 0
   },
-  contactIcon: {
-    fontSize: '18px',
-    minWidth: '24px'
-  },
-  contactLink: {
-    color: '#aaa',
+  socialLink: {
+    display: 'inline-block',
+    color: '#fff',
     textDecoration: 'none',
-    transition: 'color 0.3s'
+    background: '#2d2d44',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    fontSize: '13px',
+    width: 'fit-content',
+    marginTop: '10px'
   },
   bottomBar: {
     borderTop: '1px solid #2d2d44',
     paddingTop: '20px',
-    textAlign: 'center'
-  },
-  copyright: {
+    textAlign: 'center',
     fontSize: '12px',
-    color: '#666',
-    marginBottom: '5px'
-  },
-  credit: {
-    fontSize: '11px',
-    color: '#555'
+    color: '#666'
   }
 };
