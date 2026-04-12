@@ -100,7 +100,7 @@ function ProductsPage() {
         <h1 style={styles.title}>All Products</h1>
         <p style={styles.subtitle}>Prices in South African Rand (ZAR)</p>
 
-        {/* Mobile-friendly category filter - scrollable */}
+        {/* Category Filter - Scrollable on mobile */}
         <div style={styles.categoryWrapper}>
           <div style={styles.categoryScroll}>
             <button
@@ -164,39 +164,43 @@ function ProductsPage() {
 
 const styles = {
   container: {
-    maxWidth: '1280px',
+    maxWidth: '1200px',
     margin: '0 auto',
     padding: '20px 16px'
   },
   title: {
-    fontSize: '1.75rem',
+    fontSize: '28px',
     marginBottom: '8px',
-    color: '#333'
+    color: '#333',
+    textAlign: 'center'
   },
   subtitle: {
     color: '#666',
-    marginBottom: '20px',
-    fontSize: '14px'
+    marginBottom: '24px',
+    fontSize: '14px',
+    textAlign: 'center'
   },
   categoryWrapper: {
     marginBottom: '24px',
     overflowX: 'auto',
-    WebkitOverflowScrolling: 'touch'
+    WebkitOverflowScrolling: 'touch',
+    textAlign: 'center'
   },
   categoryScroll: {
     display: 'flex',
     gap: '10px',
     paddingBottom: '8px',
-    minWidth: 'min-content'
+    justifyContent: 'center',
+    flexWrap: 'wrap'
   },
   categoryBtn: {
-    padding: '8px 16px',
+    padding: '8px 20px',
     border: '1px solid #667eea',
     background: 'white',
     color: '#667eea',
     borderRadius: '25px',
     cursor: 'pointer',
-    fontSize: '13px',
+    fontSize: '14px',
     whiteSpace: 'nowrap',
     transition: 'all 0.3s'
   },
@@ -207,7 +211,8 @@ const styles = {
   grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-    gap: '16px'
+    gap: '20px',
+    justifyContent: 'center'
   },
   card: {
     border: '1px solid #e0e0e0',
@@ -218,7 +223,7 @@ const styles = {
     transition: 'transform 0.2s'
   },
   imageContainer: {
-    height: '180px',
+    height: '200px',
     background: 'white',
     display: 'flex',
     alignItems: 'center',
@@ -232,13 +237,14 @@ const styles = {
     objectFit: 'contain'
   },
   icon: {
-    fontSize: '3rem'
+    fontSize: '4rem'
   },
   cardContent: {
     padding: '16px'
   },
   productName: {
-    fontSize: '1rem',
+    fontSize: '16px',
+    fontWeight: '600',
     marginBottom: '8px',
     color: '#333'
   },
@@ -250,9 +256,9 @@ const styles = {
   },
   sizeBadge: {
     background: '#f0f0f0',
-    padding: '4px 10px',
+    padding: '4px 12px',
     borderRadius: '12px',
-    fontSize: '11px',
+    fontSize: '12px',
     display: 'inline-block',
     marginBottom: '12px'
   },
@@ -263,12 +269,12 @@ const styles = {
     marginTop: '8px'
   },
   price: {
-    fontSize: '1.25rem',
+    fontSize: '20px',
     fontWeight: 'bold',
     color: '#667eea'
   },
   addBtn: {
-    padding: '6px 14px',
+    padding: '8px 16px',
     color: 'white',
     border: 'none',
     borderRadius: '6px',

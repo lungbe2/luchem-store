@@ -23,19 +23,37 @@ body {
   overflow-x: hidden;
 }
 
-/* Mobile-first responsive container */
+/* Container - centered on all devices */
 .container {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 20px;
 }
 
-/* Responsive grid */
+/* For mobile - ensure content is centered */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+  
+  /* Center text on mobile */
+  h1, h2, h3, p {
+    text-align: left;
+  }
+  
+  /* But full width on mobile */
+  .full-width-mobile {
+    width: 100%;
+  }
+}
+
+/* Responsive grid - centered */
 .responsive-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
+  justify-content: center;
 }
 
 /* Mobile adjustments */
@@ -51,10 +69,6 @@ body {
   
   h2 {
     font-size: 1.5rem !important;
-  }
-  
-  .container {
-    padding: 0 12px;
   }
 }
 
@@ -84,4 +98,15 @@ button, a, [role="button"] {
 img {
   max-width: 100%;
   height: auto;
+}
+
+/* Fix for page content centering */
+#__next {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
 }

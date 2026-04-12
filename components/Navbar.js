@@ -8,15 +8,25 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [logoError, setLogoError] = useState(false);
   const [user, setUser] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    getUser();
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const getUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setUser(user);
   };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -25,70 +35,61 @@ export default function Navbar() {
   };
 
   return (
-    <>
-      <nav style={styles.navbar}>
-        <div style={styles.container}>
-          {/* Logo */}
-          <Link href="/" style={styles.logo}>
-            {!logoError ? (
-              <img 
-                src="/assets/logo.png" 
-                alt="Luchem" 
-                style={styles.logoImg}
-                onError={() => setLogoError(true)}
-              />
-            ) : (
-              <span style={styles.logoText}>LuChem</span>
-            )}
+    <nav style={styles.navbar}>
+      <div style={styles.container}>
+        {/* Logo */}
+        <Link href="/" style={styles.logo}>
+          {!logoError ? (
+            <img 
+              src="/assets/logo.png" 
+              alt="Luchem" 
+              style={styles.logoImg}
+              onError={() => setLogoError(true)}
+            />
+          ) : (
+            <span style={styles.logoText}>LuChem</span>
+          )}
+        </Link>
+
+        {/* Desktop Navigation - Hidden on mobile */}
+        <div style={{ ...styles.desktopNav, display: isMobile ? 'none' : 'flex' }}>
+          <Link href="/" style={styles.navLink}>Home</Link>
+          <Link href="/products" style={styles.navLink}>Shop</Link>
+          <Link href="/water" style={styles.navLink}>Water</Link>
+          <Link href="/raw-materials" style={styles.navLink}>Raw Materials</Link>
+          <Link href="/services" style={styles.navLink}>Services</Link>
+          {user ? (
+            <div style={styles.userMenu}>
+              <span style={styles.userName}>👤 {user.email?.split('@')[0]}</span>
+              <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
+            </div>
+          ) : (
+            <Link href="/login" style={styles.navLink}>Login</Link>
+          )}
+        </div>
+
+        {/* Right side icons */}
+        <div style={styles.rightIcons}>
+          <Link href="/cart" style={styles.cartIcon}>
+            🛒
+            {cartCount > 0 && <span style={styles.cartBadge}>{cartCount}</span>}
           </Link>
-
-          {/* Desktop Navigation */}
-          <div style={styles.desktopNav}>
-            <Link href="/" style={styles.navLink}>Home</Link>
-            <Link href="/products" style={styles.navLink}>Shop</Link>
-            <Link href="/water" style={styles.navLink}>Water</Link>
-            <Link href="/raw-materials" style={styles.navLink}>Raw</Link>
-            <Link href="/services" style={styles.navLink}>Services</Link>
-            {user ? (
-              <div style={styles.userMenu}>
-                <span style={styles.userName}>👤 {user.email?.split('@')[0]}</span>
-                <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
-              </div>
-            ) : (
-              <Link href="/login" style={styles.navLink}>Login</Link>
-            )}
-          </div>
-
-          {/* Right side icons */}
-          <div style={styles.rightIcons}>
-            <Link href="/cart" style={styles.cartIcon}>
-              🛒
-              {cartCount > 0 && <span style={styles.cartBadge}>{cartCount}</span>}
-            </Link>
-            {/* Hamburger Menu Button - More Visible */}
+          {/* Hamburger Menu - Only visible on mobile */}
+          {isMobile && (
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)} 
               style={styles.hamburgerBtn}
               aria-label="Menu"
             >
-              <div style={{
-                ...styles.hamburgerLine,
-                transform: isMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none'
-              }} />
-              <div style={{
-                ...styles.hamburgerLine,
-                opacity: isMenuOpen ? 0 : 1
-              }} />
-              <div style={{
-                ...styles.hamburgerLine,
-                transform: isMenuOpen ? 'rotate(-45deg) translate(7px, -6px)' : 'none'
-              }} />
+              {isMenuOpen ? '✕' : '☰'}
             </button>
-          </div>
+          )}
         </div>
+      </div>
 
-        {/* Mobile Menu Dropdown */}
-        <div style={{ ...styles.mobileMenu, transform: isMenuOpen ? 'translateY(0)' : 'translateY(-100%)' }}>
+      {/* Mobile Menu - Collapsible */}
+      {isMobile && isMenuOpen && (
+        <div style={styles.mobileMenu}>
           <div style={styles.mobileMenuInner}>
             <Link href="/" style={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>🏠 Home</Link>
             <Link href="/products" style={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>🛒 Shop</Link>
@@ -107,13 +108,8 @@ export default function Navbar() {
             )}
           </div>
         </div>
-      </nav>
-
-      {/* Overlay when menu is open */}
-      {isMenuOpen && (
-        <div style={styles.overlay} onClick={() => setIsMenuOpen(false)} />
       )}
-    </>
+    </nav>
   );
 }
 
@@ -194,24 +190,17 @@ const styles = {
     minWidth: '18px',
     textAlign: 'center'
   },
-  // Hamburger Menu Styles
   hamburgerBtn: {
-    display: 'none',
     background: 'none',
     border: 'none',
+    fontSize: '28px',
     cursor: 'pointer',
-    padding: '10px',
-    flexDirection: 'column',
-    gap: '5px',
-    borderRadius: '8px',
-    transition: 'background 0.3s'
-  },
-  hamburgerLine: {
-    width: '25px',
-    height: '3px',
-    background: '#333',
-    borderRadius: '2px',
-    transition: 'all 0.3s ease'
+    color: '#333',
+    padding: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    lineHeight: 1
   },
   userMenu: {
     display: 'flex',
@@ -233,16 +222,14 @@ const styles = {
     fontSize: '14px'
   },
   mobileMenu: {
-    position: 'fixed',
+    position: 'absolute',
     top: '74px',
     left: 0,
     right: 0,
     background: 'white',
     boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
     zIndex: 999,
-    transition: 'transform 0.3s ease',
-    maxHeight: 'calc(100vh - 74px)',
-    overflowY: 'auto'
+    borderTop: '1px solid #eee'
   },
   mobileMenuInner: {
     display: 'flex',
@@ -277,41 +264,5 @@ const styles = {
     padding: '8px 16px',
     borderRadius: '6px',
     fontWeight: '500'
-  },
-  overlay: {
-    position: 'fixed',
-    top: '74px',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: 'rgba(0,0,0,0.5)',
-    zIndex: 998
-  },
-  '@media (max-width: 768px)': {
-    desktopNav: {
-      display: 'none'
-    },
-    hamburgerBtn: {
-      display: 'flex'
-    },
-    logoImg: {
-      height: '40px'
-    }
   }
 };
-
-// Apply mobile styles
-if (typeof window !== 'undefined') {
-  const styleSheet = document.createElement('style');
-  styleSheet.textContent = `
-    @media (max-width: 768px) {
-      .desktop-nav {
-        display: none !important;
-      }
-      .hamburger-btn {
-        display: flex !important;
-      }
-    }
-  `;
-  document.head.appendChild(styleSheet);
-}
