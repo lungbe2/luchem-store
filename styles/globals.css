@@ -1,3 +1,6 @@
+/* Import bolder fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -17,10 +20,26 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--dark);
   background: var(--light);
   overflow-x: hidden;
+}
+
+/* Bolder headings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 900;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 800;
 }
 
 /* Container - centered on all devices */
@@ -31,24 +50,47 @@ body {
   padding: 0 20px;
 }
 
-/* For mobile - ensure content is centered */
+/* Mobile centering fixes */
 @media (max-width: 768px) {
   .container {
     padding: 0 16px;
   }
   
-  /* Center text on mobile */
-  h1, h2, h3, p {
+  /* Center all text on mobile */
+  body, .container, main, section {
+    text-align: center;
+  }
+  
+  /* But keep lists left-aligned */
+  ul, ol {
     text-align: left;
   }
   
-  /* But full width on mobile */
-  .full-width-mobile {
-    width: 100%;
+  h1 {
+    font-size: 1.75rem !important;
+    text-align: center !important;
+  }
+  
+  h2 {
+    font-size: 1.5rem !important;
+    text-align: center !important;
+  }
+  
+  h3 {
+    text-align: center !important;
+  }
+  
+  p {
+    text-align: center !important;
+  }
+  
+  /* Center product cards on mobile */
+  .product-grid, .featured-grid {
+    justify-items: center;
   }
 }
 
-/* Responsive grid - centered */
+/* Responsive grid */
 .responsive-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -61,14 +103,7 @@ body {
   .responsive-grid {
     grid-template-columns: 1fr;
     gap: 16px;
-  }
-  
-  h1 {
-    font-size: 1.75rem !important;
-  }
-  
-  h2 {
-    font-size: 1.5rem !important;
+    justify-items: center;
   }
 }
 
@@ -80,6 +115,7 @@ body {
   button, .btn {
     padding: 10px 16px !important;
     font-size: 14px !important;
+    font-weight: 600 !important;
   }
 }
 
@@ -92,6 +128,7 @@ html {
 button, a, [role="button"] {
   touch-action: manipulation;
   min-height: 44px;
+  font-weight: 600;
 }
 
 /* Image optimization */
@@ -109,4 +146,20 @@ img {
 
 main {
   flex: 1;
+}
+
+/* Bolder button styles */
+.btn, button {
+  font-weight: 700 !important;
+  letter-spacing: 0.5px;
+}
+
+/* Card styles */
+.card {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
