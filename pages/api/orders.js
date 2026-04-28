@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase';
+import { getAdminClient } from '../../lib/supabase-admin';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -6,8 +6,27 @@ export default async function handler(req, res) {
   }
 
   const { user_id, user_email, items, subtotal, delivery_fee, total, customer, town_id, town_name, payment_method } = req.body;
+  const supabase = getAdminClient();
+
+  if (!supabase) {
+    return res.status(500).json({ error: 'Supabase admin client is not configured' });
+  }
+
+  if (!user_id || !user_email || !customer || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'Invalid order payload' });
+  }
 
   try {
+    const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
+    if (!token) {
+      return res.status(401).json({ error: 'Missing authentication token' });
+    }
+
+    const { data: authData, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !authData?.user || authData.user.id !== user_id) {
+      return res.status(401).json({ error: 'Invalid authentication token' });
+    }
+
     // Create order
     const { data: order, error: orderError } = await supabase
       .from('orders')
@@ -50,12 +69,32 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: itemsError.message });
     }
 
-    // Update product stock
+    // Update product stock. Supabase JS does not support supabase.raw(), so
+    // read/update explicitly and skip non-product cart rows that may live in
+    // separate tables.
     for (const item of items) {
-      await supabase
+      if (item.type && item.type !== 'product') continue;
+
+      const { data: product, error: stockReadError } = await supabase
         .from('products')
-        .update({ stock_quantity: supabase.raw(`stock_quantity - ${item.quantity}`) })
+        .select('stock_quantity')
+        .eq('id', item.id)
+        .single();
+
+      if (stockReadError) {
+        console.error('Stock read error:', stockReadError);
+        continue;
+      }
+
+      const nextStock = Math.max(0, Number(product.stock_quantity || 0) - Number(item.quantity || 0));
+      const { error: stockUpdateError } = await supabase
+        .from('products')
+        .update({ stock_quantity: nextStock })
         .eq('id', item.id);
+
+      if (stockUpdateError) {
+        console.error('Stock update error:', stockUpdateError);
+      }
     }
 
     return res.status(200).json({ 

@@ -8,6 +8,7 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -32,16 +33,16 @@ export default function SignUp() {
       setError(error.message);
     } else {
       setSuccess(true);
-      // Create customer profile in your database
-      if (data.user) {
-        await supabase
-          .from('users')
-          .insert([{
-            id: data.user.id,
-            email: email,
-            full_name: fullName,
-            role: 'customer'
-          }]);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        await fetch('/api/profiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({ full_name: fullName })
+        });
       }
       setTimeout(() => {
         router.push('/login');
@@ -132,22 +133,40 @@ export default function SignUp() {
               fontSize: '16px'
             }}
           />
-          <input
-            type="password"
-            placeholder="Password (min 6 characters)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength="6"
-            style={{
-              width: '100%',
-              padding: '12px',
-              marginBottom: '15px',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              fontSize: '16px'
-            }}
-          />
+          <div style={{ position: 'relative', marginBottom: '15px' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password (min 6 characters)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength="6"
+              style={{
+                width: '100%',
+                padding: '12px 76px 12px 12px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                fontSize: '16px'
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '8px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                color: '#667eea',
+                cursor: 'pointer',
+                fontWeight: '600'
+              }}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
           
           <button
             type="submit"
@@ -172,6 +191,11 @@ export default function SignUp() {
           Already have an account?{' '}
           <Link href="/login" style={{ color: '#667eea', textDecoration: 'none' }}>
             Login
+          </Link>
+        </p>
+        <p style={{ textAlign: 'center', marginTop: '10px' }}>
+          <Link href="/forgot-password" style={{ color: '#667eea', textDecoration: 'none' }}>
+            Forgot your password?
           </Link>
         </p>
       </div>

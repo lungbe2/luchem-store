@@ -6,6 +6,8 @@ import { useRouter } from 'next/router';
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -91,36 +93,52 @@ export default function ResetPassword() {
             )}
 
             <form onSubmit={handleReset}>
-              <input
-                type="password"
-                placeholder="New Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  marginBottom: '15px',
-                  border: '1px solid #ddd',
-                  borderRadius: '6px',
-                  fontSize: '16px'
-                }}
-              />
-              <input
-                type="password"
-                placeholder="Confirm New Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  marginBottom: '15px',
-                  border: '1px solid #ddd',
-                  borderRadius: '6px',
-                  fontSize: '16px'
-                }}
-              />
+              <div style={{ position: 'relative', marginBottom: '15px' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="New Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px 76px 12px 12px',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    fontSize: '16px'
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={styles.showPasswordBtn}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              <div style={{ position: 'relative', marginBottom: '15px' }}>
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  placeholder="Confirm New Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px 76px 12px 12px',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    fontSize: '16px'
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={styles.showPasswordBtn}
+                >
+                  {showConfirmPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
               
               <button
                 type="submit"
@@ -146,3 +164,17 @@ export default function ResetPassword() {
     </div>
   );
 }
+
+const styles = {
+  showPasswordBtn: {
+    position: 'absolute',
+    right: '8px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'none',
+    border: 'none',
+    color: '#667eea',
+    cursor: 'pointer',
+    fontWeight: '600'
+  }
+};

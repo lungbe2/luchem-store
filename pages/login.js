@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
@@ -82,21 +83,39 @@ export default function Login() {
               fontSize: '16px'
             }}
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{
-              width: '100%',
-              padding: '12px',
-              marginBottom: '15px',
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              fontSize: '16px'
-            }}
-          />
+          <div style={{ position: 'relative', marginBottom: '15px' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: '12px 76px 12px 12px',
+                border: '1px solid #ddd',
+                borderRadius: '6px',
+                fontSize: '16px'
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '8px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                color: '#667eea',
+                cursor: 'pointer',
+                fontWeight: '600'
+              }}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
           
           <div style={{ textAlign: 'right', marginBottom: '20px' }}>
             <Link href="/forgot-password" style={{ color: '#667eea', textDecoration: 'none' }}>

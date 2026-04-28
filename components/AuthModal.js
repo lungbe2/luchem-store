@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import Link from 'next/link';
 
 export default function AuthModal({ isOpen, onClose, onSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -48,14 +50,16 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
     if (error) {
       setError(error.message);
     } else {
-      // Create user profile
-      if (data.user) {
-        await supabase
-          .from('user_profiles')
-          .insert([{
-            id: data.user.id,
-            full_name: fullName
-          }]);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        await fetch('/api/profiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({ full_name: fullName })
+        });
       }
       alert('Account created! Please check your email to confirm.');
       setIsLogin(true);
@@ -96,14 +100,30 @@ export default function AuthModal({ isOpen, onClose, onSuccess }) {
             style={styles.input}
           />
           
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={styles.input}
-          />
+          <div style={styles.passwordWrap}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ ...styles.input, paddingRight: '76px', marginBottom: 0 }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={styles.showPasswordBtn}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
+          {isLogin && (
+            <div style={styles.forgotWrap}>
+              <Link href="/forgot-password" style={styles.forgotLink} onClick={onClose}>
+                Forgot your password?
+              </Link>
+            </div>
+          )}
           
           <button type="submit" disabled={loading} style={styles.submitBtn}>
             {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
@@ -170,6 +190,30 @@ const styles = {
     border: '1px solid #ddd',
     borderRadius: '6px',
     fontSize: '16px'
+  },
+  passwordWrap: {
+    position: 'relative',
+    marginBottom: '15px'
+  },
+  showPasswordBtn: {
+    position: 'absolute',
+    right: '8px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'none',
+    border: 'none',
+    color: '#667eea',
+    cursor: 'pointer',
+    fontWeight: '600'
+  },
+  forgotWrap: {
+    textAlign: 'right',
+    margin: '-4px 0 15px'
+  },
+  forgotLink: {
+    color: '#667eea',
+    fontSize: '14px',
+    textDecoration: 'none'
   },
   submitBtn: {
     width: '100%',

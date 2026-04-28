@@ -38,12 +38,12 @@ function HomePage() {
       .eq('is_active', true)
       .limit(8);
     
-    // Fetch products on special (with old_price)
-    const { data: specials } = await supabase
+    // Some Supabase schemas do not have old_price yet. Keep homepage loading
+    // even when specials are not configured.
+    const { data: specials, error: specialsError } = await supabase
       .from('products')
       .select('*')
       .eq('is_active', true)
-      .not('old_price', 'is', null)
       .limit(4);
     
     // Fetch raw materials
@@ -53,7 +53,9 @@ function HomePage() {
       .limit(4);
     
     if (products) setFeaturedProducts(products);
-    if (specials) setSpecialProducts(specials);
+    if (!specialsError && specials) {
+      setSpecialProducts(specials.filter((product) => product.old_price && product.old_price > product.price));
+    }
     if (materials) setRawMaterials(materials);
     setLoading(false);
   };

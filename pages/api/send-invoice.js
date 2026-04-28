@@ -8,11 +8,17 @@ export default async function handler(req, res) {
   const { to, subject, orderId, customerName, customerEmail, orderDate, items, subtotal, deliveryFee, total, shippingAddress } = req.body;
 
   const formatZAR = (amount) => `R${amount.toFixed(2)}`;
+  const escapeHtml = (value = '') => String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
   // Format items for email
   const itemsList = items.map(item => `
     <tr>
-      <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.name} (${item.size || 'N/A'})</td>
+      <td style="padding: 10px; border-bottom: 1px solid #eee;">${escapeHtml(item.name)} (${escapeHtml(item.size || 'N/A')})</td>
       <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
       <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${formatZAR(item.price * item.quantity)}</td>
     </tr>
@@ -49,7 +55,7 @@ export default async function handler(req, res) {
           <p>Tax Invoice</p>
         </div>
         <div class="content">
-          <p>Dear <strong>${customerName}</strong>,</p>
+          <p>Dear <strong>${escapeHtml(customerName)}</strong>,</p>
           <p>Thank you for your order! Please find your tax invoice below.</p>
           <div class="order-details">
             <h3>Order Information</h3>
@@ -59,7 +65,7 @@ export default async function handler(req, res) {
           </div>
           <div class="order-details">
             <h3>Shipping Address</h3>
-            <p>${shippingAddress}</p>
+            <p>${escapeHtml(shippingAddress)}</p>
           </div>
           <div class="order-details">
             <h3>Order Items</h3>
@@ -81,7 +87,7 @@ Bank: First National Bank (FNB)
 Account Name: LuChem Cleaning Solutions
 Account Number: 63052838019
 Branch Code: 250655
-Reference: ${customerName.replace(/\s/g, '').toUpperCase()}-${orderId}
+Reference: ${escapeHtml(customerName).replace(/\s/g, '').toUpperCase()}-${escapeHtml(orderId)}
             </pre>
             <p><strong>⚠️ Important:</strong> Please use your NAME as reference</p>
           </div>

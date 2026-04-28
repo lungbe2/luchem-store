@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import Navbar from '../../components/Navbar';
 import EditModal from '../../components/EditModal';
+import { isAdminSession, setAdminSession } from '../../lib/adminAuth';
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -17,8 +18,6 @@ export default function AdminDashboard() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
 
-  const ADMIN_PASSWORD = 'luchemadmin2024';
-
   const formatZAR = (amount) => {
     return new Intl.NumberFormat('en-ZA', {
       style: 'currency',
@@ -28,17 +27,31 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
+    if (isAdminSession()) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (isAuthenticated) {
       fetchAllData();
     }
   }, [isAuthenticated]);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
+    const response = await fetch('/api/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+
+    if (response.ok) {
+      setAdminSession();
       setIsAuthenticated(true);
     } else {
-      alert('Wrong password!');
+      const error = await response.json().catch(() => ({ error: 'Login failed' }));
+      alert(error.error || 'Wrong password!');
     }
   };
 

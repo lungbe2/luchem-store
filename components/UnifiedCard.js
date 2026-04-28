@@ -1,6 +1,8 @@
 import Link from 'next/link';
+import { useCart } from '../context/CartContext';
 
 export default function UnifiedCard({ item, type, formatZAR }) {
+  const { addToCart } = useCart();
   const hasSpecial = item.old_price && item.old_price > item.price;
   const discountPercent = hasSpecial ? Math.round((1 - item.price / item.old_price) * 100) : 0;
 
@@ -177,21 +179,27 @@ export default function UnifiedCard({ item, type, formatZAR }) {
               } else if (type === 'raw') {
                 alert('Please contact us for bulk orders: sales@luchem.co.za');
               } else {
-                alert('Add to cart coming soon!');
+                if (item.stock_quantity === 0) {
+                  alert('This product is out of stock!');
+                  return;
+                }
+                addToCart({ ...item, type }, 1);
+                alert(`Added ${item.name} to cart!`);
               }
             }}
+            disabled={type !== 'service' && type !== 'raw' && item.stock_quantity === 0}
             style={{
               padding: '8px 16px',
-              background: '#48bb78',
+              background: type !== 'service' && type !== 'raw' && item.stock_quantity === 0 ? '#a0aec0' : '#48bb78',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
-              cursor: 'pointer',
+              cursor: type !== 'service' && type !== 'raw' && item.stock_quantity === 0 ? 'not-allowed' : 'pointer',
               fontWeight: '500',
               fontSize: '14px'
             }}
           >
-            {type === 'service' ? 'Book Now' : type === 'raw' ? 'Inquire' : 'Add to Cart'}
+            {type === 'service' ? 'Book Now' : type === 'raw' ? 'Inquire' : item.stock_quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
           </button>
         </div>
       </div>

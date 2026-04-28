@@ -249,9 +249,13 @@ function CheckoutPage() {
     };
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const response = await fetch('/api/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {})
+        },
         body: JSON.stringify(orderData),
       });
 
@@ -261,16 +265,19 @@ function CheckoutPage() {
         
         await sendInvoiceEmail(order, cart);
         
-        await supabase
-          .from('user_profiles')
-          .upsert({
-            id: user.id,
+        await fetch('/api/profiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {})
+          },
+          body: JSON.stringify({
             full_name: formData.fullName,
             phone: formData.phone,
             default_town_id: formData.town_id || null,
-            default_address: formData.address,
-            updated_at: new Date()
-          });
+            default_address: formData.address
+          })
+        });
         
         setOrderComplete(true);
         clearCart();
