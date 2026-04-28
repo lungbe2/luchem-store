@@ -1,135 +1,276 @@
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function Hero() {
+  const [isMobile, setIsMobile] = useState(false);
+  const quickLinks = [
+    { label: 'Dishwashing', href: '/products?category=dishwashing' },
+    { label: 'Car wash', href: '/products?category=car_wash' },
+    { label: 'Car detailing', href: '/products?category=car_detailing' },
+    { label: 'Bleach', href: '/products?category=bleach' },
+    { label: 'Water', href: '/water' }
+  ];
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 820);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <section style={styles.hero}>
-      <div style={styles.content}>
-        <h1 style={styles.title}>
-          Clean <span style={styles.gradient}>Everything</span>
-          <br />With Confidence
-        </h1>
-        <p style={styles.subtitle}>
-          Professional-grade cleaning detergents for your home, car, and business.
-          Powerful, eco-friendly, and affordable prices in South African Rand (ZAR).
-        </p>
-        <div style={styles.buttons}>
-          <Link href="/products" style={styles.primaryBtn}>
-            Shop Now →
-          </Link>
-          <Link href="/services" style={styles.secondaryBtn}>
-            Book Services
-          </Link>
-        </div>
-      </div>
-      <div style={styles.stats}>
-        <div style={styles.stat}>
-          <span style={styles.statNumber}>10K+</span>
-          <span style={styles.statLabel}>Happy Customers</span>
-        </div>
-        <div style={styles.stat}>
-          <span style={styles.statNumber}>50+</span>
-          <span style={styles.statLabel}>Products</span>
-        </div>
-        <div style={styles.stat}>
-          <span style={styles.statNumber}>24/7</span>
-          <span style={styles.statLabel}>Support</span>
-        </div>
-      </div>
+      <div style={styles.glowOne}></div>
+      <div style={styles.glowTwo}></div>
 
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .hero-title {
-            font-size: 2rem !important;
-          }
-          .hero-buttons {
-            flex-direction: column !important;
-            align-items: center !important;
-          }
-          .hero-stats {
-            gap: 2rem !important;
-          }
-        }
-      `}</style>
+      <div style={{ ...styles.inner, gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1.12fr) minmax(320px, 0.88fr)' }}>
+        <div style={{ ...styles.copy, textAlign: isMobile ? 'center' : 'left', margin: isMobile ? '0 auto' : 0 }}>
+          <div style={styles.badge}>Premium Cleaning Supply Store</div>
+          <h1 style={styles.title}>
+            Clean smarter.
+            <span style={styles.titleAccent}> Stock up faster.</span>
+          </h1>
+          <p style={styles.subtitle}>
+            Professional detergents, raw materials, bottled water, and cleaning services from LuChem.
+            Built for households, car washes, offices, and bulk buyers.
+          </p>
+
+          <div style={{ ...styles.ctas, justifyContent: isMobile ? 'center' : 'flex-start' }}>
+            <Link href="/products" style={styles.primaryBtn}>Shop Products</Link>
+            <Link href="/services" style={styles.secondaryBtn}>Book Cleaning</Link>
+          </div>
+
+          <div style={{ ...styles.quickLinks, justifyContent: isMobile ? 'center' : 'flex-start' }}>
+            {quickLinks.map((link) => (
+              <Link href={link.href} key={link.label} style={styles.quickLink}>
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ ...styles.panel, maxWidth: isMobile ? '560px' : 'none', margin: isMobile ? '0 auto' : 0 }}>
+          <div style={styles.panelTop}>
+            <span style={styles.panelKicker}>Popular now</span>
+            <span style={styles.panelTag}>ZAR pricing</span>
+          </div>
+
+          <div style={styles.offerCard}>
+            <div>
+              <span style={styles.offerLabel}>5L essentials</span>
+              <h2 style={styles.offerTitle}>Dish Wash, Pine Gel, Bleach</h2>
+              <p style={styles.offerText}>Reliable stock for daily cleaning, resale, and business use.</p>
+            </div>
+            <Link href="/products" style={styles.offerBtn}>View Deals</Link>
+          </div>
+
+          <div style={{ ...styles.miniGrid, gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr' }}>
+            <div style={styles.miniCard}>
+              <strong>Fast checkout</strong>
+              <span>Invoice payments supported</span>
+            </div>
+            <div style={styles.miniCard}>
+              <strong>Bulk ready</strong>
+              <span>25L options available</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
 
 const styles = {
   hero: {
-    background: 'linear-gradient(135deg, #667eea15 0%, #764ba215 100%)',
-    padding: '80px 20px',
-    textAlign: 'center',
     position: 'relative',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    background: 'linear-gradient(135deg, #071a33 0%, #0b3a63 46%, #0f766e 100%)',
+    color: 'white',
+    padding: '76px 20px 64px'
   },
-  content: {
-    maxWidth: '800px',
-    margin: '0 auto'
+  glowOne: {
+    position: 'absolute',
+    width: '360px',
+    height: '360px',
+    borderRadius: '50%',
+    background: 'rgba(255,207,36,0.18)',
+    top: '-120px',
+    right: '10%',
+    filter: 'blur(8px)'
+  },
+  glowTwo: {
+    position: 'absolute',
+    width: '460px',
+    height: '460px',
+    borderRadius: '50%',
+    background: 'rgba(14,165,233,0.18)',
+    bottom: '-220px',
+    left: '-80px',
+    filter: 'blur(10px)'
+  },
+  inner: {
+    position: 'relative',
+    maxWidth: '1280px',
+    margin: '0 auto',
+    display: 'grid',
+    gridTemplateColumns: 'minmax(0, 1.12fr) minmax(320px, 0.88fr)',
+    gap: '44px',
+    alignItems: 'center'
+  },
+  copy: {
+    maxWidth: '740px'
+  },
+  badge: {
+    display: 'inline-flex',
+    background: 'rgba(255,255,255,0.12)',
+    border: '1px solid rgba(255,255,255,0.22)',
+    color: '#fef3c7',
+    padding: '8px 14px',
+    borderRadius: '999px',
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: '0.06em',
+    fontSize: '12px',
+    marginBottom: '20px'
   },
   title: {
-    fontSize: '3.5rem',
-    fontWeight: '900',
-    marginBottom: '1.5rem',
-    lineHeight: '1.2',
-    fontFamily: "'Poppins', sans-serif"
+    fontSize: 'clamp(2.7rem, 6vw, 5.8rem)',
+    lineHeight: 0.94,
+    margin: '0 0 22px',
+    letterSpacing: '-0.07em',
+    fontWeight: '950'
   },
-  gradient: {
-    background: 'linear-gradient(135deg, #667eea, #764ba2)',
-    WebkitBackgroundClip: 'text',
-    backgroundClip: 'text',
-    color: 'transparent'
+  titleAccent: {
+    display: 'block',
+    color: '#ffcf24'
   },
   subtitle: {
-    fontSize: '1.2rem',
-    color: '#a0aec0',
-    marginBottom: '2rem',
-    lineHeight: '1.6'
+    fontSize: 'clamp(1rem, 2vw, 1.25rem)',
+    color: '#dbeafe',
+    lineHeight: 1.7,
+    maxWidth: '680px',
+    marginBottom: '28px'
   },
-  buttons: {
+  ctas: {
     display: 'flex',
-    gap: '1rem',
-    justifyContent: 'center',
-    marginBottom: '3rem'
+    gap: '14px',
+    flexWrap: 'wrap',
+    marginBottom: '22px'
   },
   primaryBtn: {
-    display: 'inline-block',
-    padding: '14px 28px',
-    background: 'linear-gradient(135deg, #667eea, #764ba2)',
-    color: 'white',
-    borderRadius: '8px',
-    fontWeight: '700',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: '#ffcf24',
+    color: '#071a33',
+    padding: '15px 26px',
+    borderRadius: '12px',
+    fontWeight: '900',
     textDecoration: 'none',
-    transition: 'all 0.3s ease'
+    boxShadow: '0 18px 34px rgba(0,0,0,0.24)'
   },
   secondaryBtn: {
-    display: 'inline-block',
-    padding: '14px 28px',
-    border: '2px solid #667eea',
-    background: 'transparent',
-    color: '#667eea',
-    borderRadius: '8px',
-    fontWeight: '700',
-    textDecoration: 'none',
-    transition: 'all 0.3s ease'
-  },
-  stats: {
-    display: 'flex',
+    display: 'inline-flex',
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: '4rem',
-    marginTop: '3rem'
-  },
-  stat: {
-    textAlign: 'center'
-  },
-  statNumber: {
-    display: 'block',
-    fontSize: '2rem',
+    background: 'rgba(255,255,255,0.12)',
+    color: 'white',
+    padding: '15px 26px',
+    borderRadius: '12px',
+    border: '1px solid rgba(255,255,255,0.25)',
     fontWeight: '900',
-    color: '#667eea'
+    textDecoration: 'none'
   },
-  statLabel: {
-    color: '#a0aec0',
-    fontSize: '0.9rem',
-    fontWeight: '500'
+  quickLinks: {
+    display: 'flex',
+    gap: '10px',
+    flexWrap: 'wrap'
+  },
+  quickLink: {
+    color: '#e0f2fe',
+    textDecoration: 'none',
+    border: '1px solid rgba(255,255,255,0.18)',
+    background: 'rgba(255,255,255,0.08)',
+    borderRadius: '999px',
+    padding: '8px 12px',
+    fontSize: '13px',
+    fontWeight: '800'
+  },
+  panel: {
+    background: 'rgba(255,255,255,0.12)',
+    border: '1px solid rgba(255,255,255,0.22)',
+    borderRadius: '26px',
+    padding: '18px',
+    boxShadow: '0 26px 80px rgba(0,0,0,0.28)',
+    backdropFilter: 'blur(14px)'
+  },
+  panelTop: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '14px'
+  },
+  panelKicker: {
+    fontWeight: '900',
+    color: '#fef3c7'
+  },
+  panelTag: {
+    background: '#0f172a',
+    color: '#ffcf24',
+    padding: '6px 10px',
+    borderRadius: '999px',
+    fontWeight: '900',
+    fontSize: '12px'
+  },
+  offerCard: {
+    minHeight: '260px',
+    borderRadius: '22px',
+    background: 'linear-gradient(145deg, #ffffff 0%, #edf7ff 100%)',
+    color: '#071a33',
+    padding: '28px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    overflow: 'hidden'
+  },
+  offerLabel: {
+    color: '#0f766e',
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    fontSize: '12px'
+  },
+  offerTitle: {
+    margin: '10px 0',
+    fontSize: '2rem',
+    lineHeight: 1.05,
+    color: '#071a33'
+  },
+  offerText: {
+    color: '#475569',
+    lineHeight: 1.6
+  },
+  offerBtn: {
+    alignSelf: 'flex-start',
+    background: '#071a33',
+    color: 'white',
+    padding: '12px 18px',
+    borderRadius: '10px',
+    textDecoration: 'none',
+    fontWeight: '900'
+  },
+  miniGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '12px',
+    marginTop: '12px'
+  },
+  miniCard: {
+    background: 'rgba(255,255,255,0.12)',
+    border: '1px solid rgba(255,255,255,0.16)',
+    borderRadius: '16px',
+    padding: '14px',
+    display: 'grid',
+    gap: '4px'
   }
 };

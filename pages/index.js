@@ -92,6 +92,7 @@ function HomePage() {
   const categories = [
     { name: 'Dishwashing', icon: '🧼', color: '#4299e1', link: '/products?category=dishwashing' },
     { name: 'Car Wash', icon: '🚗', color: '#48bb78', link: '/products?category=car_wash' },
+    { name: 'Car Detailing', icon: 'Auto', color: '#0f766e', link: '/products?category=car_detailing' },
     { name: 'Bleach', icon: '🧴', color: '#ed8936', link: '/products?category=bleach' },
     { name: 'Bottled Water', icon: '💧', color: '#0284c7', link: '/water' },
     { name: 'Raw Materials', icon: '🧪', color: '#9f7aea', link: '/raw-materials' },
@@ -105,29 +106,40 @@ function HomePage() {
       <Hero />
 
       {/* Category Pills Section */}
-      <section style={{ padding: '40px 20px', background: 'white' }}>
+      <section style={{ padding: '34px 20px 46px', background: '#f8fbff' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: '20px', flexWrap: 'wrap', marginBottom: '22px' }}>
+            <div>
+              <span style={{ color: '#0f766e', fontSize: '12px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Shop by department</span>
+              <h2 style={{ margin: '6px 0 0', color: '#071a33', fontSize: '2rem' }}>Everything LuChem supplies</h2>
+            </div>
+            <Link href="/products" style={{ color: '#071a33', fontWeight: '900', textDecoration: 'none', background: '#ffcf24', padding: '12px 18px', borderRadius: '999px' }}>
+              View all products
+            </Link>
+          </div>
           <div style={{
-            display: 'flex',
-            gap: '15px',
-            flexWrap: 'wrap',
-            justifyContent: 'center'
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+            gap: '14px'
           }}>
             {categories.map(cat => (
-              <Link href={cat.link} key={cat.name}>
+              <Link href={cat.link} key={cat.name} style={{ textDecoration: 'none' }}>
                 <div style={{
                   display: 'flex',
-                  flexDirection: 'column',
+                  flexDirection: 'row',
                   alignItems: 'center',
-                  padding: '15px 25px',
-                  background: `${cat.color}10`,
-                  borderRadius: '12px',
+                  gap: '12px',
+                  padding: '18px',
+                  background: 'white',
+                  border: '1px solid #e5edf7',
+                  boxShadow: '0 16px 34px rgba(15,23,42,0.06)',
+                  borderRadius: '18px',
                   cursor: 'pointer',
                   transition: 'transform 0.3s',
-                  minWidth: '100px'
+                  minHeight: '84px'
                 }}>
-                  <div style={{ fontSize: '2rem' }}>{cat.icon}</div>
-                  <span style={{ marginTop: '8px', fontWeight: '500', color: cat.color }}>{cat.name}</span>
+                  <div style={{ fontSize: '1.8rem', width: '48px', height: '48px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${cat.color}16` }}>{cat.icon}</div>
+                  <span style={{ fontWeight: '900', color: '#071a33' }}>{cat.name}</span>
                 </div>
               </Link>
             ))}

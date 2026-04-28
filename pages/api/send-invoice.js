@@ -104,7 +104,7 @@ Reference: ${escapeHtml(customerName).replace(/\s/g, '').toUpperCase()}-${escape
         </div>
         <div class="footer">
           <p>© ${new Date().getFullYear()} LuChem Cleaning Solutions</p>
-          <p>8 Reserwe Street, Oudtshoorn, Western Cape</p>
+          <p>Cape Town, Western Cape</p>
         </div>
       </div>
     </body>

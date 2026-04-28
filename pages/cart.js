@@ -3,10 +3,19 @@ import Navbar from '../components/Navbar';
 import Link from 'next/link';
 import { CartProvider } from '../context/CartContext';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 function CartPage() {
   const { cart, cartTotal, updateQuantity, removeFromCart, clearCart, formatZAR } = useCart();
   const router = useRouter();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleCheckout = () => {
     router.push('/checkout');
@@ -33,11 +42,11 @@ function CartPage() {
       <div style={styles.container}>
         <h1>Shopping Cart</h1>
         
-        <div style={styles.cartContainer}>
+        <div style={{ ...styles.cartContainer, gridTemplateColumns: isMobile ? '1fr' : '1fr 350px' }}>
           <div style={styles.cartItems}>
             {cart.map(item => (
-              <div key={`${item.id}-${item.type}`} style={styles.cartItem}>
-                <div style={styles.itemImage}>
+              <div key={`${item.id}-${item.type}`} style={{ ...styles.cartItem, flexDirection: isMobile ? 'column' : 'row', textAlign: isMobile ? 'center' : 'left' }}>
+                <div style={{ ...styles.itemImage, alignSelf: isMobile ? 'center' : 'auto' }}>
                   {item.image_url ? (
                     <img src={item.image_url} alt={item.name} style={styles.image} />
                   ) : (
@@ -50,14 +59,14 @@ function CartPage() {
                   <h3>{item.name}</h3>
                   <p>{item.size && `Size: ${item.size}`}</p>
                   <p>{formatZAR(item.price)}</p>
-                  <div style={styles.quantityControls}>
+                  <div style={{ ...styles.quantityControls, justifyContent: isMobile ? 'center' : 'flex-start', flexWrap: 'wrap' }}>
                     <button onClick={() => updateQuantity(item.id, item.type, item.quantity - 1)}>-</button>
                     <span>{item.quantity}</span>
                     <button onClick={() => updateQuantity(item.id, item.type, item.quantity + 1)}>+</button>
                     <button onClick={() => removeFromCart(item.id, item.type)} style={styles.removeBtn}>Remove</button>
                   </div>
                 </div>
-                <div style={styles.itemTotal}>
+                <div style={{ ...styles.itemTotal, textAlign: isMobile ? 'center' : 'right' }}>
                   {formatZAR(item.price * item.quantity)}
                 </div>
               </div>

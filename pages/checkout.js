@@ -22,6 +22,7 @@ function CheckoutPage() {
   const [orderId, setOrderId] = useState(null);
   const [selectedPayment, setSelectedPayment] = useState('invoice');
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -37,6 +38,13 @@ function CheckoutPage() {
 
   useEffect(() => {
     checkUser();
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   useEffect(() => {
@@ -369,25 +377,25 @@ function CheckoutPage() {
           </div>
         )}
         
-        <div style={styles.stepProgress}>
+        <div style={{ ...styles.stepProgress, gap: isMobile ? '6px' : '10px' }}>
           <div style={{ ...styles.step, ...(currentStep >= 1 ? styles.stepActive : {}) }}>
             <div style={styles.stepNumber}>1</div>
             <div style={styles.stepLabel}>Shipping</div>
           </div>
-          <div style={styles.stepLine}></div>
+          <div style={{ ...styles.stepLine, width: isMobile ? '28px' : '60px' }}></div>
           <div style={{ ...styles.step, ...(currentStep >= 2 ? styles.stepActive : {}) }}>
             <div style={styles.stepNumber}>2</div>
             <div style={styles.stepLabel}>Summary</div>
           </div>
-          <div style={styles.stepLine}></div>
+          <div style={{ ...styles.stepLine, width: isMobile ? '28px' : '60px' }}></div>
           <div style={{ ...styles.step, ...(currentStep >= 3 ? styles.stepActive : {}) }}>
             <div style={styles.stepNumber}>3</div>
             <div style={styles.stepLabel}>Payment</div>
           </div>
         </div>
 
-        <div style={styles.checkoutWrapper}>
-          <div style={styles.formColumn}>
+        <div style={{ ...styles.checkoutWrapper, gridTemplateColumns: isMobile ? '1fr' : '1fr 350px' }}>
+          <div style={{ ...styles.formColumn, padding: isMobile ? '20px' : '30px' }}>
             {currentStep === 1 && (
               <div style={styles.section}>
                 <h2>Shipping Information</h2>
@@ -420,7 +428,7 @@ function CheckoutPage() {
                 
                 <div style={styles.formGroup}>
                   <label>Delivery Location *</label>
-                  <div style={styles.locationRow}>
+                  <div style={{ ...styles.locationRow, flexDirection: isMobile ? 'column' : 'row' }}>
                     <select
                       name="town_id"
                       required
@@ -537,7 +545,7 @@ function CheckoutPage() {
                   </div>
                 </div>
 
-                <div style={styles.buttonGroup}>
+                <div style={{ ...styles.buttonGroup, flexDirection: isMobile ? 'column' : 'row' }}>
                   <button onClick={handlePrevStep} style={styles.backBtn}>
                     ← Back
                   </button>
@@ -590,7 +598,7 @@ function CheckoutPage() {
                   </div>
                 </div>
 
-                <div style={styles.buttonGroup}>
+                <div style={{ ...styles.buttonGroup, flexDirection: isMobile ? 'column' : 'row' }}>
                   <button onClick={() => setCurrentStep(2)} style={styles.backBtn}>
                     ← Back
                   </button>
@@ -606,7 +614,7 @@ function CheckoutPage() {
             )}
           </div>
 
-          <div style={styles.summaryColumn}>
+          <div style={{ ...styles.summaryColumn, position: isMobile ? 'static' : 'sticky' }}>
             <div style={styles.cartSummary}>
               <h3>Your Cart ({cart.length} items)</h3>
               <div style={styles.cartItems}>
@@ -687,7 +695,7 @@ const styles = {
   cartTotal: { display: 'flex', justifyContent: 'space-between', marginTop: '10px', paddingTop: '10px', fontSize: '14px' },
   cartGrandTotal: { display: 'flex', justifyContent: 'space-between', marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #ddd', fontWeight: 'bold', fontSize: '18px' },
   emptyCart: { textAlign: 'center', padding: '80px 20px' },
-  continueBtn: { marginTop: '20px', padding: '12px 24px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
+  shopBtn: { marginTop: '20px', padding: '12px 24px', background: '#667eea', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' },
   success: { textAlign: 'center', padding: '80px 20px' },
   successIcon: { fontSize: '64px', marginBottom: '20px', color: '#48bb78' }
 };

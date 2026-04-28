@@ -26,6 +26,9 @@ export default function AdminDashboard() {
     }).format(amount);
   };
 
+  const shopProducts = products.filter(product => product.category !== 'car_detailing');
+  const carDetailingProducts = products.filter(product => product.category === 'car_detailing');
+
   useEffect(() => {
     if (isAdminSession()) {
       setIsAuthenticated(true);
@@ -270,7 +273,10 @@ export default function AdminDashboard() {
         
         <div style={styles.tabs}>
           <button onClick={() => { setActiveTab('products'); setEditingItem(null); }} style={{ ...styles.tab, ...(activeTab === 'products' ? styles.activeTab : {}) }}>
-            🧼 Products ({products.length})
+            🧼 Products ({shopProducts.length})
+          </button>
+          <button onClick={() => { setActiveTab('detailing'); setEditingItem(null); }} style={{ ...styles.tab, ...(activeTab === 'detailing' ? styles.activeTab : {}) }}>
+            Car Detailing ({carDetailingProducts.length})
           </button>
           <button onClick={() => { setActiveTab('raw'); setEditingItem(null); }} style={{ ...styles.tab, ...(activeTab === 'raw' ? styles.activeTab : {}) }}>
             🧪 Raw Materials ({rawMaterials.length})
@@ -288,7 +294,7 @@ export default function AdminDashboard() {
           <div>
             <div style={styles.header}>
               <h2>Products Management</h2>
-              <button onClick={() => { setEditingItem({}); setEditingType('product'); }} style={styles.addButton}>
+              <button onClick={() => { setEditingItem({ category: 'dishwashing' }); setEditingType('product'); }} style={styles.addButton}>
                 + Add New Product
               </button>
             </div>
@@ -300,7 +306,7 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map(product => (
+                  {shopProducts.map(product => (
                     <tr key={product.id} style={styles.tableRow}>
                       <td>{product.image_url ? <img src={product.image_url} style={styles.tableImage} /> : '📷'}</td>
                       <td>{product.id}</td>
@@ -315,6 +321,49 @@ export default function AdminDashboard() {
                       </td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Car Detailing Tab */}
+        {activeTab === 'detailing' && (
+          <div>
+            <div style={styles.header}>
+              <h2>Car Detailing Products</h2>
+              <button onClick={() => { setEditingItem({ category: 'car_detailing' }); setEditingType('product'); }} style={styles.addButton}>
+                + Add Car Detailing Product
+              </button>
+            </div>
+            <div style={styles.tableContainer}>
+              <table style={styles.table}>
+                <thead>
+                  <tr style={styles.tableHeader}>
+                    <th>Image</th><th>ID</th><th>Name</th><th>Category</th><th>Size</th><th>Price</th><th>Stock</th><th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {carDetailingProducts.map(product => (
+                    <tr key={product.id} style={styles.tableRow}>
+                      <td>{product.image_url ? <img src={product.image_url} style={styles.tableImage} /> : 'Auto'}</td>
+                      <td>{product.id}</td>
+                      <td>{product.name}</td>
+                      <td>{product.category}</td>
+                      <td>{product.size}</td>
+                      <td>{formatZAR(product.price)}</td>
+                      <td>{product.stock_quantity}</td>
+                      <td>
+                        <button onClick={() => { setEditingItem(product); setEditingType('product'); }} style={styles.editButton}>Edit</button>
+                        <button onClick={() => handleDelete(product, 'product')} style={styles.deleteButton}>Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {carDetailingProducts.length === 0 && (
+                    <tr style={styles.tableRow}>
+                      <td colSpan="8" style={styles.emptyCell}>No car detailing products yet. Add the first one here.</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -461,6 +510,7 @@ const styles = {
   table: { width: '100%', borderCollapse: 'collapse', background: 'white' },
   tableHeader: { background: '#667eea', color: 'white', padding: '12px', textAlign: 'left' },
   tableRow: { borderBottom: '1px solid #eee' },
+  emptyCell: { padding: '18px', textAlign: 'center', color: '#64748b' },
   tableImage: { width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' },
   editButton: { padding: '5px 10px', marginRight: '5px', background: '#4299e1', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' },
   deleteButton: { padding: '5px 10px', background: '#fc8181', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' },

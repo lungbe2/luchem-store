@@ -129,6 +129,7 @@ export default function EditModal({ isOpen, onClose, onSave, item, type, saving 
                   >
                     <option value="dishwashing">Dishwashing</option>
                     <option value="car_wash">Car Wash</option>
+                    <option value="car_detailing">Car Detailing</option>
                     <option value="bleach">Bleach</option>
                     <option value="floor_cleaner">Floor Cleaner</option>
                     <option value="kitchen">Kitchen</option>

@@ -51,7 +51,7 @@ export default function Footer() {
             <a href="mailto:info@luchem.co.za" style={styles.link}>📧 info@luchem.co.za</a>
             <a href="mailto:sales@luchem.co.za" style={styles.link}>📧 sales@luchem.co.za</a>
             <p style={styles.contactText}>📞 071 017 7161</p>
-            <p style={styles.contactText}>📍 Oudtshoorn, WC</p>
+            <p style={styles.contactText}>📍 Cape Town, WC</p>
           </div>
         </div>
 

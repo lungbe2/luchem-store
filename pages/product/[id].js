@@ -15,6 +15,7 @@ function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeTab, setActiveTab] = useState('description');
+  const [isMobile, setIsMobile] = useState(false);
 
   const formatZAR = (amount) => {
     return new Intl.NumberFormat('en-ZA', {
@@ -29,6 +30,13 @@ function ProductPage() {
       fetchProduct();
     }
   }, [id]);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const fetchProduct = async () => {
     if (!id) return;
@@ -69,6 +77,7 @@ function ProductPage() {
   const categoryNames = {
     'dishwashing': '🧼 Dishwashing Liquid',
     'car_wash': '🚗 Car Wash',
+    'car_detailing': 'Auto Car Detailing',
     'bleach': '🧴 Bleach',
     'floor_cleaner': '🧹 Floor Cleaner',
     'kitchen': '🍳 Kitchen Cleaner',
@@ -80,6 +89,7 @@ function ProductPage() {
     const icons = {
       dishwashing: '🧼',
       car_wash: '🚗',
+      car_detailing: 'Auto',
       bleach: '🧴',
       floor_cleaner: '🧹',
       kitchen: '🍳',
@@ -125,11 +135,11 @@ function ProductPage() {
         </div>
 
         {/* Product Main Section */}
-        <div style={styles.productMain}>
+        <div style={{ ...styles.productMain, gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '24px' : '50px' }}>
           {/* Left - Image Gallery */}
           <div style={styles.imageGallery}>
             <div style={styles.mainImageContainer}>
-              <div style={styles.mainImage}>
+              <div style={{ ...styles.mainImage, minHeight: isMobile ? '260px' : '400px' }}>
                 {selectedImage ? (
                   <img 
                     src={selectedImage} 
@@ -160,12 +170,12 @@ function ProductPage() {
           </div>
 
           {/* Right - Product Info */}
-          <div style={styles.productInfo}>
+          <div style={{ ...styles.productInfo, textAlign: isMobile ? 'center' : 'left' }}>
             <div style={styles.category}>{categoryNames[product.category] || product.category}</div>
             <h1 style={styles.productTitle}>{product.name}</h1>
             
             {/* Rating Placeholder */}
-            <div style={styles.rating}>
+            <div style={{ ...styles.rating, justifyContent: isMobile ? 'center' : 'flex-start', flexWrap: 'wrap' }}>
               <span>★★★★☆</span>
               <span style={styles.reviewCount}>(4.2 • 128 reviews)</span>
             </div>
@@ -182,7 +192,7 @@ function ProductPage() {
             </div>
 
             {/* Stock Status */}
-            <div style={styles.stockStatus}>
+            <div style={{ ...styles.stockStatus, justifyContent: isMobile ? 'center' : 'flex-start', flexWrap: 'wrap' }}>
               {!isOutOfStock ? (
                 <>
                   <span style={styles.inStock}>✓ In Stock</span>
@@ -194,7 +204,7 @@ function ProductPage() {
             </div>
 
             {/* Quantity Selector - Disabled when out of stock */}
-            <div style={styles.quantitySection}>
+            <div style={{ ...styles.quantitySection, justifyContent: isMobile ? 'center' : 'flex-start', flexWrap: 'wrap' }}>
               <label>Quantity:</label>
               <div style={styles.quantitySelector}>
                 <button 
@@ -264,7 +274,7 @@ function ProductPage() {
 
         {/* Product Details Tabs */}
         <div style={styles.tabsContainer}>
-          <div style={styles.tabs}>
+          <div style={{ ...styles.tabs, gap: isMobile ? '12px' : '30px', overflowX: 'auto' }}>
             <button 
               onClick={() => setActiveTab('description')}
               style={{...styles.tab, ...(activeTab === 'description' ? styles.activeTab : {})}}

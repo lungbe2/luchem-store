@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { supabase } from '../lib/supabase';
 import Navbar from '../components/Navbar';
 import { useCart } from '../context/CartContext';
@@ -10,6 +11,7 @@ function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
+  const router = useRouter();
 
   const formatZAR = (amount) => {
     return new Intl.NumberFormat('en-ZA', {
@@ -20,20 +22,40 @@ function ProductsPage() {
   };
 
   useEffect(() => {
-    fetchProducts();
     fetchCategories();
-  }, [selectedCategory]);
+  }, []);
 
-  const fetchProducts = async () => {
+  useEffect(() => {
+    if (!router.isReady) return;
+    let isCurrent = true;
+    const category = typeof router.query.category === 'string' ? router.query.category : 'all';
+    const nextCategory = category || 'all';
+    setSelectedCategory(nextCategory);
+    fetchProducts(nextCategory, () => isCurrent);
+    return () => {
+      isCurrent = false;
+    };
+  }, [router.isReady, router.query.category]);
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    router.push(category === 'all' ? '/products' : `/products?category=${category}`, undefined, { shallow: true });
+  };
+
+  const fetchProducts = async (category = selectedCategory, isCurrent = () => true) => {
     setLoading(true);
     let query = supabase.from('products').select('*').eq('is_active', true);
     
-    if (selectedCategory !== 'all') {
-      query = query.eq('category', selectedCategory);
+    if (category === 'all') {
+      query = query.neq('category', 'car_detailing');
+    } else {
+      query = query.eq('category', category);
     }
     
     const { data, error } = await query.order('name');
     
+    if (!isCurrent()) return;
+
     if (!error && data) {
       setProducts(data);
     }
@@ -73,6 +95,7 @@ function ProductsPage() {
   const categoryNames = {
     'dishwashing': '🧼 Dishwashing',
     'car_wash': '🚗 Car Wash',
+    'car_detailing': 'Auto Car Detailing',
     'bleach': '🧴 Bleach',
     'floor_cleaner': '🧹 Floor Cleaner',
     'kitchen': '🍳 Kitchen',
@@ -84,6 +107,7 @@ function ProductsPage() {
     const icons = {
       dishwashing: '🧼',
       car_wash: '🚗',
+      car_detailing: 'Auto',
       bleach: '🧴',
       floor_cleaner: '🧹',
       kitchen: '🍳',
@@ -93,17 +117,19 @@ function ProductsPage() {
     return icons[category] || '🧹';
   };
 
+  const pageTitle = selectedCategory === 'car_detailing' ? 'Car Detailing Products' : 'All Products';
+
   return (
     <div>
       <Navbar />
       <div style={styles.container}>
-        <h1 style={styles.title}>All Products</h1>
+        <h1 style={styles.title}>{pageTitle}</h1>
         <p style={styles.subtitle}>Prices in South African Rand (ZAR)</p>
 
         <div style={styles.categoryWrapper}>
           <div style={styles.categoryScroll}>
             <button
-              onClick={() => setSelectedCategory('all')}
+              onClick={() => handleCategoryChange('all')}
               style={{...styles.categoryBtn, ...(selectedCategory === 'all' ? styles.categoryActive : {})}}
             >
               All
@@ -111,10 +137,10 @@ function ProductsPage() {
             {categories.map(cat => (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 style={{...styles.categoryBtn, ...(selectedCategory === cat ? styles.categoryActive : {})}}
               >
-                {cat === 'dishwashing' ? '🧼' : cat === 'car_wash' ? '🚗' : cat === 'bleach' ? '🧴' : '🧹'} {categoryNames[cat]?.split(' ')[0] || cat}
+                {getCategoryIcon(cat)} {categoryNames[cat]?.replace(/^\S+\s/, '') || cat}
               </button>
             ))}
           </div>
