@@ -98,12 +98,30 @@ h2 {
     gap: 24px !important;
     width: 100% !important;
     max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
   }
 
   .home-hero-copy,
   .home-hero-panel {
     width: 100% !important;
     max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .home-hero-copy *,
+  .home-hero-panel * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .home-hero-copy h1,
+  .home-hero-copy p,
+  .home-hero-panel h2,
+  .home-hero-panel p {
+    overflow-wrap: anywhere !important;
   }
 
   .container {

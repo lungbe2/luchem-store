@@ -23,8 +23,8 @@ export default function Hero() {
       <div style={styles.glowOne}></div>
       <div style={styles.glowTwo}></div>
 
-      <div className="home-hero-inner" style={{ ...styles.inner, gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1.12fr) minmax(320px, 0.88fr)' }}>
-        <div className="home-hero-copy" style={{ ...styles.copy, textAlign: isMobile ? 'center' : 'left', margin: isMobile ? '0 auto' : 0 }}>
+      <div className="home-hero-inner" style={{ ...styles.inner, gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : 'minmax(0, 1.12fr) minmax(320px, 0.88fr)' }}>
+        <div className="home-hero-copy" style={{ ...styles.copy, textAlign: isMobile ? 'center' : 'left', margin: isMobile ? '0 auto' : 0, minWidth: 0 }}>
           <div style={{ ...styles.badge, fontSize: isMobile ? '10px' : '12px', marginBottom: isMobile ? '14px' : '20px' }}>Premium Cleaning Supply Store</div>
           <h1 style={{
             ...styles.title,
@@ -40,7 +40,8 @@ export default function Hero() {
             ...styles.subtitle,
             fontSize: isMobile ? '15px' : 'clamp(1rem, 2vw, 1.25rem)',
             lineHeight: isMobile ? 1.55 : 1.7,
-            marginBottom: isMobile ? '20px' : '28px'
+            marginBottom: isMobile ? '20px' : '28px',
+            overflowWrap: 'break-word'
           }}>
             Professional detergents, raw materials, bottled water, and cleaning services from LuChem.
             Built for households, car washes, offices, and bulk buyers.
@@ -61,7 +62,9 @@ export default function Hero() {
             justifyContent: isMobile ? 'flex-start' : 'flex-start',
             flexWrap: isMobile ? 'nowrap' : 'wrap',
             overflowX: isMobile ? 'auto' : 'visible',
-            paddingBottom: isMobile ? '4px' : 0
+            paddingBottom: isMobile ? '4px' : 0,
+            width: '100%',
+            maxWidth: '100%'
           }}>
             {quickLinks.map((link) => (
               <Link href={link.href} key={link.label} style={styles.quickLink}>
@@ -71,7 +74,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="home-hero-panel" style={{ ...styles.panel, maxWidth: isMobile ? '560px' : 'none', margin: isMobile ? '0 auto' : 0, padding: isMobile ? '14px' : '18px', borderRadius: isMobile ? '20px' : '26px' }}>
+        <div className="home-hero-panel" style={{ ...styles.panel, maxWidth: isMobile ? '100%' : 'none', margin: isMobile ? '0 auto' : 0, padding: isMobile ? '14px' : '18px', borderRadius: isMobile ? '20px' : '26px', minWidth: 0 }}>
           <div style={styles.panelTop}>
             <span style={styles.panelKicker}>Popular now</span>
             <span style={styles.panelTag}>ZAR pricing</span>
@@ -80,7 +83,7 @@ export default function Hero() {
           <div style={{ ...styles.offerCard, minHeight: isMobile ? '190px' : '260px', padding: isMobile ? '20px' : '28px', borderRadius: isMobile ? '18px' : '22px' }}>
             <div>
               <span style={styles.offerLabel}>5L essentials</span>
-              <h2 style={{ ...styles.offerTitle, fontSize: isMobile ? '1.45rem' : '2rem' }}>Dish Wash, Pine Gel, Bleach</h2>
+              <h2 style={{ ...styles.offerTitle, fontSize: isMobile ? '1.45rem' : '2rem', overflowWrap: 'break-word' }}>Dish Wash, Pine Gel, Bleach</h2>
               <p style={styles.offerText}>Reliable stock for daily cleaning, resale, and business use.</p>
             </div>
             <Link href="/products" style={styles.offerBtn}>View Deals</Link>
@@ -106,6 +109,8 @@ const styles = {
   hero: {
     position: 'relative',
     overflow: 'hidden',
+    width: '100%',
+    maxWidth: '100%',
     background: 'linear-gradient(135deg, #071a33 0%, #0b3a63 46%, #0f766e 100%)',
     color: 'white',
     padding: '76px 20px 64px'
@@ -137,10 +142,12 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: 'minmax(0, 1.12fr) minmax(320px, 0.88fr)',
     gap: '44px',
-    alignItems: 'center'
+    alignItems: 'center',
+    minWidth: 0
   },
   copy: {
-    maxWidth: '740px'
+    maxWidth: '740px',
+    minWidth: 0
   },
   badge: {
     display: 'inline-flex',
@@ -216,7 +223,8 @@ const styles = {
     borderRadius: '999px',
     padding: '8px 12px',
     fontSize: '13px',
-    fontWeight: '800'
+    fontWeight: '800',
+    flexShrink: 0
   },
   panel: {
     background: 'rgba(255,255,255,0.12)',
@@ -224,7 +232,9 @@ const styles = {
     borderRadius: '26px',
     padding: '18px',
     boxShadow: '0 26px 80px rgba(0,0,0,0.28)',
-    backdropFilter: 'blur(14px)'
+    backdropFilter: 'blur(14px)',
+    minWidth: 0,
+    overflow: 'hidden'
   },
   panelTop: {
     display: 'flex',
@@ -253,7 +263,8 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    minWidth: 0
   },
   offerLabel: {
     color: '#0f766e',
