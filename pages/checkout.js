@@ -234,6 +234,65 @@ function CheckoutPage() {
     }
   };
 
+  const saveProfile = async (session) => {
+    await fetch('/api/profiles', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {})
+      },
+      body: JSON.stringify({
+        full_name: formData.fullName,
+        phone: formData.phone,
+        default_town_id: formData.town_id || null,
+        default_address: formData.address
+      })
+    });
+  };
+
+  const submitPayFastPayment = async (orderId, session) => {
+    const selectedTown = towns.find(t => t.id === parseInt(formData.town_id));
+    const response = await fetch('/api/payfast/create-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {})
+      },
+      body: JSON.stringify({
+        orderId,
+        customer: {
+          fullName: formData.fullName,
+          phone: formData.phone,
+          address: formData.address,
+          address_line2: formData.address_line2,
+          region: selectedTown?.province || ''
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Could not prepare PayFast payment' }));
+      throw new Error(error.error || 'Could not prepare PayFast payment');
+    }
+
+    const { processUrl, fields } = await response.json();
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.action = processUrl;
+    form.style.display = 'none';
+
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value || '';
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+  };
+
   const handlePlaceOrder = async () => {
     setLoading(true);
 
@@ -270,22 +329,15 @@ function CheckoutPage() {
       if (response.ok) {
         const order = await response.json();
         setOrderId(order.orderId);
+
+        await saveProfile(session);
+
+        if (selectedPayment === 'payfast') {
+          await submitPayFastPayment(order.orderId, session);
+          return;
+        }
         
         await sendInvoiceEmail(order, cart);
-        
-        await fetch('/api/profiles', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {})
-          },
-          body: JSON.stringify({
-            full_name: formData.fullName,
-            phone: formData.phone,
-            default_town_id: formData.town_id || null,
-            default_address: formData.address
-          })
-        });
         
         setOrderComplete(true);
         clearCart();
@@ -589,6 +641,29 @@ function CheckoutPage() {
                     </label>
                   </div>
                   
+                  <div 
+                    style={{
+                      ...styles.paymentOption,
+                      border: selectedPayment === 'payfast' ? '2px solid #071a33' : '1px solid #ddd',
+                      background: selectedPayment === 'payfast' ? '#eef6ff' : 'white'
+                    }}
+                    onClick={() => setSelectedPayment('payfast')}
+                  >
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      checked={selectedPayment === 'payfast'}
+                      onChange={() => setSelectedPayment('payfast')}
+                    />
+                    <label style={{ flex: 1, cursor: 'pointer' }}>
+                      <strong>PayFast Online Payment</strong>
+                      <p>Pay securely online by card, instant EFT, or supported PayFast payment methods.</p>
+                      <div style={{ marginTop: '10px', padding: '10px', background: '#f9fbff', borderRadius: '6px', fontSize: '13px' }}>
+                        You will be redirected to PayFast to complete payment for <strong>{formatZAR(totalWithDelivery)}</strong>.
+                      </div>
+                    </label>
+                  </div>
+                  
                   <div style={styles.paymentOptionDisabled}>
                     <input type="radio" name="payment" disabled />
                     <label style={{ opacity: 0.5 }}>
@@ -603,12 +678,14 @@ function CheckoutPage() {
                     ← Back
                   </button>
                   <button onClick={handlePlaceOrder} disabled={loading} style={styles.placeOrderBtn}>
-                    {loading ? 'Placing Order...' : `Place Order • ${formatZAR(totalWithDelivery)}`}
+                    {loading ? 'Processing...' : selectedPayment === 'payfast' ? `Pay with PayFast - ${formatZAR(totalWithDelivery)}` : `Place Order - ${formatZAR(totalWithDelivery)}`}
                   </button>
                 </div>
                 
                 <p style={styles.paymentNote}>
-                  By placing this order, you agree to pay the invoice within 7 days.
+                  {selectedPayment === 'payfast'
+                    ? 'You will be redirected to PayFast. Your order will update automatically after payment is confirmed.'
+                    : 'By placing this order, you agree to pay the invoice within 7 days.'}
                 </p>
               </div>
             )}

@@ -45,6 +45,12 @@ export default function Footer() {
             <Link href="/policies/privacy" style={styles.link}>🔒 Privacy</Link>
           </div>
 
+          <div style={styles.column}>
+            <h3 style={styles.title}>Payments</h3>
+            <p style={styles.paymentTrust}>Secure online payments via PayFast</p>
+            <p style={styles.contactText}>Invoice and EFT payments also available.</p>
+          </div>
+
           {/* Contact */}
           <div style={styles.column}>
             <h3 style={styles.title}>Contact</h3>
@@ -125,6 +131,12 @@ const styles = {
     fontSize: '13px',
     width: 'fit-content',
     marginTop: '10px'
+  },
+  paymentTrust: {
+    color: '#dbeafe',
+    fontSize: '13px',
+    fontWeight: '700',
+    margin: 0
   },
   bottomBar: {
     borderTop: '1px solid #2d2d44',
