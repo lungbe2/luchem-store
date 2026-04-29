@@ -10,6 +10,7 @@ function ProductsPage() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const { addToCart } = useCart();
   const router = useRouter();
 
@@ -23,6 +24,13 @@ function ProductsPage() {
 
   useEffect(() => {
     fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   useEffect(() => {
@@ -122,12 +130,17 @@ function ProductsPage() {
   return (
     <div>
       <Navbar />
-      <div style={styles.container}>
-        <h1 style={styles.title}>{pageTitle}</h1>
+      <div style={{ ...styles.container, padding: isMobile ? '16px 12px' : '20px 16px' }}>
+        <h1 style={{ ...styles.title, fontSize: isMobile ? '28px' : '32px' }}>{pageTitle}</h1>
         <p style={styles.subtitle}>Prices in South African Rand (ZAR)</p>
 
         <div style={styles.categoryWrapper}>
-          <div style={styles.categoryScroll}>
+          <div style={{
+            ...styles.categoryScroll,
+            justifyContent: isMobile ? 'flex-start' : 'center',
+            flexWrap: isMobile ? 'nowrap' : 'wrap',
+            overflowX: isMobile ? 'auto' : 'visible'
+          }}>
             <button
               onClick={() => handleCategoryChange('all')}
               style={{...styles.categoryBtn, ...(selectedCategory === 'all' ? styles.categoryActive : {})}}
@@ -149,30 +162,30 @@ function ProductsPage() {
         {loading ? (
           <div style={styles.loading}>Loading products...</div>
         ) : (
-          <div style={styles.grid}>
+          <div style={{ ...styles.grid, gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(auto-fill, minmax(280px, 1fr))', gap: isMobile ? '12px' : '20px' }}>
             {products.map(product => (
               <div 
                 key={product.id} 
                 style={styles.card}
                 onClick={() => window.location.href = `/product/${product.id}`}
               >
-                <div style={styles.imageContainer}>
+                <div style={{ ...styles.imageContainer, height: isMobile ? '145px' : '200px', padding: isMobile ? '10px' : '16px' }}>
                   {product.image_url ? (
                     <img src={product.image_url} alt={product.name} style={styles.image} />
                   ) : (
                     <div style={styles.icon}>{getCategoryIcon(product.category)}</div>
                   )}
                 </div>
-                <div style={styles.cardContent}>
-                  <h3 style={styles.productName}>{product.name}</h3>
-                  <p style={styles.description}>{product.description?.substring(0, 60)}...</p>
+                <div style={{ ...styles.cardContent, padding: isMobile ? '12px' : '16px' }}>
+                  <h3 style={{ ...styles.productName, fontSize: isMobile ? '15px' : '18px' }}>{product.name}</h3>
+                  <p style={{ ...styles.description, display: isMobile ? 'none' : 'block' }}>{product.description?.substring(0, 60)}...</p>
                   <span style={styles.sizeBadge}>{product.size}</span>
-                  <div style={styles.cardFooter}>
-                    <span style={styles.price}>{formatZAR(product.price)}</span>
+                  <div style={{ ...styles.cardFooter, alignItems: isMobile ? 'stretch' : 'center', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '8px' : 0 }}>
+                    <span style={{ ...styles.price, fontSize: isMobile ? '18px' : '20px' }}>{formatZAR(product.price)}</span>
                     <button
                       onClick={(e) => handleAddToCart(product, e)}
                       disabled={product.stock_quantity === 0}
-                      style={{...styles.addBtn, background: product.stock_quantity === 0 ? '#ccc' : '#48bb78'}}
+                      style={{...styles.addBtn, width: isMobile ? '100%' : 'auto', background: product.stock_quantity === 0 ? '#ccc' : '#48bb78'}}
                     >
                       {product.stock_quantity === 0 ? 'Out' : 'Add'}
                     </button>

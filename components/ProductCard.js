@@ -195,6 +195,35 @@ export default function ProductCard({ product }) {
           background: #a0aec0;
           cursor: not-allowed;
         }
+        @media (max-width: 640px) {
+          .product-card {
+            border-radius: 14px;
+          }
+          .product-image {
+            height: 145px;
+          }
+          .product-icon {
+            font-size: 3rem;
+          }
+          .product-info {
+            padding: 0.75rem;
+          }
+          .product-description {
+            display: none;
+          }
+          .product-footer {
+            align-items: stretch;
+            flex-direction: column;
+            gap: 8px;
+          }
+          .product-price {
+            font-size: 1.05rem;
+          }
+          .add-to-cart-btn {
+            width: 100%;
+            padding: 9px 10px;
+          }
+        }
       `}</style>
     </div>
   );

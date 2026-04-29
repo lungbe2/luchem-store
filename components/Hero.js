@@ -19,28 +19,50 @@ export default function Hero() {
   }, []);
 
   return (
-    <section style={styles.hero}>
+    <section className="home-hero" style={{ ...styles.hero, padding: isMobile ? '34px 14px 30px' : '76px 20px 64px' }}>
       <div style={styles.glowOne}></div>
       <div style={styles.glowTwo}></div>
 
-      <div style={{ ...styles.inner, gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1.12fr) minmax(320px, 0.88fr)' }}>
-        <div style={{ ...styles.copy, textAlign: isMobile ? 'center' : 'left', margin: isMobile ? '0 auto' : 0 }}>
-          <div style={styles.badge}>Premium Cleaning Supply Store</div>
-          <h1 style={styles.title}>
+      <div className="home-hero-inner" style={{ ...styles.inner, gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1.12fr) minmax(320px, 0.88fr)' }}>
+        <div className="home-hero-copy" style={{ ...styles.copy, textAlign: isMobile ? 'center' : 'left', margin: isMobile ? '0 auto' : 0 }}>
+          <div style={{ ...styles.badge, fontSize: isMobile ? '10px' : '12px', marginBottom: isMobile ? '14px' : '20px' }}>Premium Cleaning Supply Store</div>
+          <h1 style={{
+            ...styles.title,
+            fontSize: isMobile ? '2.55rem' : 'clamp(2.7rem, 6vw, 5.8rem)',
+            lineHeight: isMobile ? 1 : 0.94,
+            letterSpacing: isMobile ? '-0.045em' : '-0.07em',
+            marginBottom: isMobile ? '16px' : '22px'
+          }}>
             Clean smarter.
             <span style={styles.titleAccent}> Stock up faster.</span>
           </h1>
-          <p style={styles.subtitle}>
+          <p style={{
+            ...styles.subtitle,
+            fontSize: isMobile ? '15px' : 'clamp(1rem, 2vw, 1.25rem)',
+            lineHeight: isMobile ? 1.55 : 1.7,
+            marginBottom: isMobile ? '20px' : '28px'
+          }}>
             Professional detergents, raw materials, bottled water, and cleaning services from LuChem.
             Built for households, car washes, offices, and bulk buyers.
           </p>
 
-          <div style={{ ...styles.ctas, justifyContent: isMobile ? 'center' : 'flex-start' }}>
-            <Link href="/products" style={styles.primaryBtn}>Shop Products</Link>
-            <Link href="/services" style={styles.secondaryBtn}>Book Cleaning</Link>
+          <div style={{
+            ...styles.ctas,
+            justifyContent: isMobile ? 'center' : 'flex-start',
+            flexDirection: isMobile ? 'column' : 'row',
+            marginBottom: isMobile ? '16px' : '22px'
+          }}>
+            <Link href="/products" style={{ ...styles.primaryBtn, width: isMobile ? '100%' : 'auto' }}>Shop Products</Link>
+            <Link href="/services" style={{ ...styles.secondaryBtn, width: isMobile ? '100%' : 'auto' }}>Book Cleaning</Link>
           </div>
 
-          <div style={{ ...styles.quickLinks, justifyContent: isMobile ? 'center' : 'flex-start' }}>
+          <div style={{
+            ...styles.quickLinks,
+            justifyContent: isMobile ? 'flex-start' : 'flex-start',
+            flexWrap: isMobile ? 'nowrap' : 'wrap',
+            overflowX: isMobile ? 'auto' : 'visible',
+            paddingBottom: isMobile ? '4px' : 0
+          }}>
             {quickLinks.map((link) => (
               <Link href={link.href} key={link.label} style={styles.quickLink}>
                 {link.label}
@@ -49,16 +71,16 @@ export default function Hero() {
           </div>
         </div>
 
-        <div style={{ ...styles.panel, maxWidth: isMobile ? '560px' : 'none', margin: isMobile ? '0 auto' : 0 }}>
+        <div className="home-hero-panel" style={{ ...styles.panel, maxWidth: isMobile ? '560px' : 'none', margin: isMobile ? '0 auto' : 0, padding: isMobile ? '14px' : '18px', borderRadius: isMobile ? '20px' : '26px' }}>
           <div style={styles.panelTop}>
             <span style={styles.panelKicker}>Popular now</span>
             <span style={styles.panelTag}>ZAR pricing</span>
           </div>
 
-          <div style={styles.offerCard}>
+          <div style={{ ...styles.offerCard, minHeight: isMobile ? '190px' : '260px', padding: isMobile ? '20px' : '28px', borderRadius: isMobile ? '18px' : '22px' }}>
             <div>
               <span style={styles.offerLabel}>5L essentials</span>
-              <h2 style={styles.offerTitle}>Dish Wash, Pine Gel, Bleach</h2>
+              <h2 style={{ ...styles.offerTitle, fontSize: isMobile ? '1.45rem' : '2rem' }}>Dish Wash, Pine Gel, Bleach</h2>
               <p style={styles.offerText}>Reliable stock for daily cleaning, resale, and business use.</p>
             </div>
             <Link href="/products" style={styles.offerBtn}>View Deals</Link>

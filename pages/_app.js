@@ -15,6 +15,7 @@ function MyApp({ Component, pageProps }) {
     <CartProvider>
       <Head>
         <title>LuChem | Premium Cleaning Solutions</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <meta name="description" content="Shop LuChem cleaning detergents, raw materials, bottled water, and cleaning services in South Africa." />
         <meta name="theme-color" content="#071a33" />
         <link rel="icon" href="/favicon.ico" />

@@ -1,10 +1,19 @@
 import Link from 'next/link';
 import { useCart } from '../context/CartContext';
+import { useEffect, useState } from 'react';
 
 export default function UnifiedCard({ item, type, formatZAR }) {
   const { addToCart } = useCart();
+  const [isMobile, setIsMobile] = useState(false);
   const hasSpecial = item.old_price && item.old_price > item.price;
   const discountPercent = hasSpecial ? Math.round((1 - item.price / item.old_price) * 100) : 0;
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const getIcon = () => {
     if (type === 'product') {
@@ -95,12 +104,12 @@ export default function UnifiedCard({ item, type, formatZAR }) {
       
       {/* Image container with WHITE background */}
       <div style={{
-        height: '220px',
+        height: isMobile ? '165px' : '220px',
         background: 'white',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '20px',
+        padding: isMobile ? '12px' : '20px',
         borderBottom: '1px solid #f0f0f0'
       }}>
         {item.image_url ? (
@@ -119,20 +128,20 @@ export default function UnifiedCard({ item, type, formatZAR }) {
             }}
           />
         ) : (
-          <div style={{ fontSize: '4rem' }}>{getIcon()}</div>
+          <div style={{ fontSize: isMobile ? '3rem' : '4rem' }}>{getIcon()}</div>
         )}
       </div>
       
-      <div style={{ padding: '20px' }}>
+      <div style={{ padding: isMobile ? '14px' : '20px' }}>
         <h3 style={{ 
           margin: '0 0 10px', 
-          fontSize: '1.1rem',
+          fontSize: isMobile ? '1rem' : '1.1rem',
           fontWeight: '600',
           color: '#333'
         }}>
           {item.name}
         </h3>
-        <p style={{ color: '#666', fontSize: '14px', marginBottom: '10px', lineHeight: '1.4' }}>
+        <p style={{ color: '#666', fontSize: '14px', marginBottom: '10px', lineHeight: '1.4', display: isMobile ? 'none' : 'block' }}>
           {item.description?.substring(0, 80)}...
         </p>
         
@@ -154,7 +163,14 @@ export default function UnifiedCard({ item, type, formatZAR }) {
           )}
         </div>
         
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px' }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: isMobile ? 'stretch' : 'center',
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: isMobile ? '10px' : 0,
+          marginTop: '15px'
+        }}>
           <div>
             {hasSpecial && item.old_price && (
               <span style={{ 
@@ -166,7 +182,7 @@ export default function UnifiedCard({ item, type, formatZAR }) {
                 {formatZAR(item.old_price)}
               </span>
             )}
-            <span style={{ fontSize: '24px', fontWeight: 'bold', color: hasSpecial ? '#e53e3e' : '#667eea' }}>
+            <span style={{ fontSize: isMobile ? '20px' : '24px', fontWeight: 'bold', color: hasSpecial ? '#e53e3e' : '#667eea' }}>
               {getPriceDisplay()}
             </span>
             {getSecondaryInfo()}
@@ -196,7 +212,8 @@ export default function UnifiedCard({ item, type, formatZAR }) {
               borderRadius: '6px',
               cursor: type !== 'service' && type !== 'raw' && item.stock_quantity === 0 ? 'not-allowed' : 'pointer',
               fontWeight: '500',
-              fontSize: '14px'
+              fontSize: '14px',
+              width: isMobile ? '100%' : 'auto'
             }}
           >
             {type === 'service' ? 'Book Now' : type === 'raw' ? 'Inquire' : item.stock_quantity === 0 ? 'Out of Stock' : 'Add to Cart'}

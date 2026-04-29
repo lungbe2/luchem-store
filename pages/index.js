@@ -13,6 +13,7 @@ function HomePage() {
   const [recentlyViewed, setRecentlyViewed] = useState([]);
   const [rawMaterials, setRawMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const { addToCart } = useCart();
 
   const formatZAR = (amount) => {
@@ -26,6 +27,13 @@ function HomePage() {
   useEffect(() => {
     fetchData();
     loadRecentlyViewed();
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const fetchData = async () => {
@@ -106,21 +114,21 @@ function HomePage() {
       <Hero />
 
       {/* Category Pills Section */}
-      <section style={{ padding: '34px 20px 46px', background: '#f8fbff' }}>
+      <section style={{ padding: isMobile ? '24px 12px 30px' : '34px 20px 46px', background: '#f8fbff' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: '20px', flexWrap: 'wrap', marginBottom: '22px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'end', gap: '14px', flexWrap: 'wrap', marginBottom: '22px' }}>
             <div>
               <span style={{ color: '#0f766e', fontSize: '12px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Shop by department</span>
-              <h2 style={{ margin: '6px 0 0', color: '#071a33', fontSize: '2rem' }}>Everything LuChem supplies</h2>
+              <h2 style={{ margin: '6px 0 0', color: '#071a33', fontSize: isMobile ? '1.55rem' : '2rem' }}>Everything LuChem supplies</h2>
             </div>
-            <Link href="/products" style={{ color: '#071a33', fontWeight: '900', textDecoration: 'none', background: '#ffcf24', padding: '12px 18px', borderRadius: '999px' }}>
+            <Link href="/products" style={{ color: '#071a33', fontWeight: '900', textDecoration: 'none', background: '#ffcf24', padding: '12px 18px', borderRadius: '999px', textAlign: 'center', width: isMobile ? '100%' : 'auto' }}>
               View all products
             </Link>
           </div>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '14px'
+            gridTemplateColumns: isMobile ? 'repeat(2, minmax(0, 1fr))' : 'repeat(auto-fit, minmax(160px, 1fr))',
+            gap: isMobile ? '10px' : '14px'
           }}>
             {categories.map(cat => (
               <Link href={cat.link} key={cat.name} style={{ textDecoration: 'none' }}>
@@ -128,18 +136,18 @@ function HomePage() {
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  gap: '12px',
-                  padding: '18px',
+                  gap: isMobile ? '8px' : '12px',
+                  padding: isMobile ? '12px' : '18px',
                   background: 'white',
                   border: '1px solid #e5edf7',
                   boxShadow: '0 16px 34px rgba(15,23,42,0.06)',
                   borderRadius: '18px',
                   cursor: 'pointer',
                   transition: 'transform 0.3s',
-                  minHeight: '84px'
+                  minHeight: isMobile ? '74px' : '84px'
                 }}>
-                  <div style={{ fontSize: '1.8rem', width: '48px', height: '48px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${cat.color}16` }}>{cat.icon}</div>
-                  <span style={{ fontWeight: '900', color: '#071a33' }}>{cat.name}</span>
+                  <div style={{ fontSize: isMobile ? '1.25rem' : '1.8rem', width: isMobile ? '38px' : '48px', height: isMobile ? '38px' : '48px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `${cat.color}16` }}>{cat.icon}</div>
+                  <span style={{ fontWeight: '900', color: '#071a33', fontSize: isMobile ? '13px' : '16px' }}>{cat.name}</span>
                 </div>
               </Link>
             ))}

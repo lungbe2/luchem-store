@@ -32,8 +32,8 @@ export default function Navbar() {
   };
 
   return (
-    <nav style={styles.navbar}>
-      <div style={styles.topRail}>
+    <nav className="site-navbar" style={styles.navbar}>
+      <div className="site-top-rail" style={{ ...styles.topRail, display: isMobile ? 'none' : 'block' }}>
         <div style={styles.topRailInner}>
           <span>Premium cleaning supplies</span>
           <span>Fast local service</span>
@@ -41,13 +41,17 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div style={styles.container}>
+      <div className="site-nav-container" style={{ ...styles.container, padding: isMobile ? '8px 0' : '12px 0', gap: isMobile ? '8px' : '15px' }}>
         <Link href="/" style={styles.logo}>
           {!logoError ? (
             <img
               src="/assets/logo.png"
               alt="LuChem"
-              style={{ ...styles.logoImg, height: isMobile ? '68px' : '96px' }}
+              style={{
+                ...styles.logoImg,
+                height: isMobile ? '48px' : '96px',
+                maxWidth: isMobile ? '170px' : '310px'
+              }}
               onError={() => setLogoError(true)}
             />
           ) : (
@@ -55,7 +59,7 @@ export default function Navbar() {
           )}
         </Link>
 
-        <div style={{ ...styles.desktopNav, display: isMobile ? 'none' : 'flex' }}>
+        <div className="site-desktop-nav" style={{ ...styles.desktopNav, display: isMobile ? 'none' : 'flex' }}>
           <Link href="/" style={styles.navLink}>Home</Link>
           <Link href="/products" style={styles.shopLink}>Shop</Link>
           <Link href="/products?category=car_detailing" style={styles.navLink}>Car Detailing</Link>
@@ -72,8 +76,18 @@ export default function Navbar() {
           )}
         </div>
 
-        <div style={styles.rightIcons}>
-          <Link href="/cart" style={styles.cartIcon} aria-label="Cart">
+        <div style={{ ...styles.rightIcons, gap: isMobile ? '8px' : '12px' }}>
+          <Link
+            href="/cart"
+            style={{
+              ...styles.cartIcon,
+              minWidth: isMobile ? '48px' : '56px',
+              height: isMobile ? '40px' : '46px',
+              borderRadius: isMobile ? '12px' : '16px',
+              padding: isMobile ? '0 10px' : '0 12px'
+            }}
+            aria-label="Cart"
+          >
             <span>Cart</span>
             {cartCount > 0 && <span style={styles.cartBadge}>{cartCount}</span>}
           </Link>
@@ -261,7 +275,7 @@ const styles = {
   },
   mobileMenu: {
     position: 'absolute',
-    top: '103px',
+    top: '100%',
     left: 0,
     right: 0,
     background: 'white',
@@ -272,25 +286,27 @@ const styles = {
   mobileMenuInner: {
     display: 'flex',
     flexDirection: 'column',
-    padding: '16px'
+    padding: '12px',
+    gap: '8px'
   },
   mobileLink: {
-    padding: '14px 0',
+    padding: '13px 14px',
     textDecoration: 'none',
     color: '#1f2937',
     fontWeight: '800',
     fontSize: '16px',
-    borderBottom: '1px solid #f0f0f0'
+    border: '1px solid #eef2f7',
+    borderRadius: '14px',
+    background: '#f8fbff'
   },
   mobileLinkHighlight: {
-    padding: '14px 16px',
+    padding: '13px 14px',
     textDecoration: 'none',
     color: '#071a33',
     fontWeight: '900',
     fontSize: '16px',
     background: '#ffcf24',
-    borderRadius: '14px',
-    marginBottom: '8px'
+    borderRadius: '14px'
   },
   mobileUser: {
     padding: '14px 0',
