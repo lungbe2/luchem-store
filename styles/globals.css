@@ -70,7 +70,23 @@ h2 {
   }
 
   .site-nav-container {
+    display: flex !important;
+    justify-content: space-between !important;
     min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .site-right-icons {
+    margin-left: auto !important;
+  }
+
+  .site-menu-button {
+    display: inline-flex !important;
+  }
+
+  .site-mobile-menu {
+    display: block !important;
   }
 
   .home-hero {
@@ -125,6 +141,12 @@ h2 {
   /* Center product cards on mobile */
   .product-grid, .featured-grid {
     justify-items: center;
+  }
+}
+
+@media (min-width: 769px) {
+  .site-mobile-menu {
+    display: none !important;
   }
 }
 

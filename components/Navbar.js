@@ -76,7 +76,7 @@ export default function Navbar() {
           )}
         </div>
 
-        <div style={{ ...styles.rightIcons, gap: isMobile ? '8px' : '12px' }}>
+        <div className="site-right-icons" style={{ ...styles.rightIcons, gap: isMobile ? '8px' : '12px' }}>
           <Link
             href="/cart"
             style={{
@@ -92,20 +92,22 @@ export default function Navbar() {
             {cartCount > 0 && <span style={styles.cartBadge}>{cartCount}</span>}
           </Link>
 
-          {isMobile && (
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              style={styles.hamburgerBtn}
-              aria-label="Menu"
-            >
-              {isMenuOpen ? 'X' : 'Menu'}
-            </button>
-          )}
+          <button
+            className="site-menu-button"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            style={styles.hamburgerBtn}
+            aria-label="Menu"
+            aria-expanded={isMenuOpen}
+          >
+            <span style={styles.hamburgerLine}></span>
+            <span style={styles.hamburgerLine}></span>
+            <span style={styles.hamburgerLine}></span>
+          </button>
         </div>
       </div>
 
-      {isMobile && isMenuOpen && (
-        <div style={styles.mobileMenu}>
+      {isMenuOpen && (
+        <div className="site-mobile-menu" style={styles.mobileMenu}>
           <div style={styles.mobileMenuInner}>
             <Link href="/" style={styles.mobileLink} onClick={() => setIsMenuOpen(false)}>Home</Link>
             <Link href="/products" style={styles.mobileLinkHighlight} onClick={() => setIsMenuOpen(false)}>Shop Products</Link>
@@ -245,13 +247,27 @@ const styles = {
     border: '2px solid white'
   },
   hamburgerBtn: {
+    display: 'none',
     background: '#071a33',
     border: 'none',
     color: 'white',
     cursor: 'pointer',
-    padding: '10px 14px',
+    padding: '10px',
     borderRadius: '14px',
-    fontWeight: '900'
+    fontWeight: '900',
+    width: '44px',
+    height: '44px',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    gap: '4px'
+  },
+  hamburgerLine: {
+    display: 'block',
+    width: '20px',
+    height: '2px',
+    background: 'white',
+    borderRadius: '99px'
   },
   userMenu: {
     display: 'flex',
